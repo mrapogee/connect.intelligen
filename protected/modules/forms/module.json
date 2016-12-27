@@ -1,0 +1,11 @@
+{
+    "id": "energy.intelligen.forms",
+    "name": "Intelligen Forms",
+    "description": "Forms for Intelligen.Enengy",
+    "keywords": ["forms"],
+    "version": "0.0.1",
+    "humhub": {
+        "minVersion": "1.1.0"
+    },
+    "screenshots": []
+}
