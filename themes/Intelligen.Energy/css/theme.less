@@ -17,6 +17,8 @@
 @background3: #d7d7d7;
 @background4: #b2b2b2;
 
+
+
 //
 // Theme color classes
 // (Add this classes to the html elements from your
@@ -3033,4 +3035,20 @@ img.bounceIn {
 .ui-widget-header .ui-state-active {
   border: 1px solid @info !important;
   background: lighten(@info, 25%) !important;
+}
+
+// Custom 
+.PSpaceForm {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+
+  > .activity {
+    padding-left: 10px;
+    align-self: flex-end;
+  }
+
+  > .message {
+    flex-grow: 1;
+  }
 }

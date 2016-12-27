@@ -7,10 +7,6 @@ use humhub\modules\space\models\Space;
 
 <div class="panel panel-default">
     <div class="panel-body" id="contentFormBody">
-        <i class="fa fa-phone" style="padding: 0 0px 16px 16px; font-size: 24px"></i>
-        <i class="fa fa-comment" style="padding: 0 0px 16px 16px; font-size: 24px"></i>
-        <i class="fa fa-envelope" style="padding: 0 0px 16px 16px; font-size: 24px"></i>
-        <i class="fa fa-tasks" style="padding: 0 0px 16px 16px; font-size: 24px"></i>
         <?php echo Html::beginForm('', 'POST'); ?>
 
         <ul id="contentFormError">

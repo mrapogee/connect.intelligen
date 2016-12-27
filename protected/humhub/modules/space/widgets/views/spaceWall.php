@@ -4,7 +4,6 @@ use yii\helpers\Html;
 ?>
 <div class="panel panel-default">
     <div class="panel-body">
-
         <div class="media">
             <a href="<?php echo $space->getUrl(); ?>" class="pull-left">
                 <!-- Show space image -->

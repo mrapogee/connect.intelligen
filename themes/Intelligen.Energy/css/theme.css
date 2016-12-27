@@ -2575,3 +2575,15 @@ img.bounceIn {
   border: 1px solid #6fdbe8 !important;
   background: #ddf6fa !important;
 }
+.PSpaceForm {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+.PSpaceForm > .activity {
+  padding-left: 10px;
+  align-self: flex-end;
+}
+.PSpaceForm > .message {
+  flex-grow: 1;
+}

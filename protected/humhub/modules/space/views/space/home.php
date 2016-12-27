@@ -1,6 +1,5 @@
-<?php echo \humhub\modules\post\widgets\Form::widget(['contentContainer' => $space]); ?>
+<?php echo \intelligen\modules\pcontent\widgets\Form::widget(['contentContainer' => $space]); ?>
 <?php
-
 $emptyMessage = '';
 if ($canCreatePosts) {
     $emptyMessage = Yii::t('SpaceModule.views_space_index', '<b>This space is still empty!</b><br>Start by posting something here...');
