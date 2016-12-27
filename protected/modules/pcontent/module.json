@@ -1,0 +1,11 @@
+{
+    "id": "energy.intelligen.pcontent",
+    "name": "Intelligen Content",
+    "description": "Content System for Intelligen.Enengy",
+    "keywords": ["content"],
+    "version": "0.0.1",
+    "humhub": {
+        "minVersion": "1.1.0"
+    },
+    "screenshots": []
+}
