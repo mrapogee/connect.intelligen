@@ -78,10 +78,16 @@ $this->registerJsVar('scSpaceListUrl', Url::to(['/space/list', 'ajax' => 1]));
         </li>
         <?php if ($canCreateSpace): ?>
             <li>
-                <div class="dropdown-footer">
+                <div class="dropdown-footer btn-group">
                     <?php
-                    echo Html::a(Yii::t('SpaceModule.widgets_views_spaceChooser', 'Create new space'), Url::to(['/space/create/create']), array('class' => 'btn btn-info col-md-12', 'data-target' => '#globalModal'));
+                    $plusIcon = '<i class="fa fa-plus"></i>';
+
+                    echo Html::a("$plusIcon Client", Url::to(['/space/create/create']), array('class' => 'btn btn-info', 'data-target' => '#globalModal'));
                     ?>
+                    <?php
+                    echo Html::a("$plusIcon Project", Url::to(['/space/create/create']), array('class' => 'btn btn-default', 'data-target' => '#globalModal'));
+                    ?>
+
                 </div>
             </li>
         <?php endif; ?>

@@ -14,6 +14,7 @@ use humhub\modules\content\models\WallEntry;
 use humhub\modules\user\models\User;
 use yii\base\ActionEvent;
 use yii\base\Exception;
+use intelligen\modules\pcontent\models\WallContentMembership;
 
 /**
  * BaseStreamAction
@@ -101,7 +102,6 @@ class Stream extends \yii\base\Action
 
     public function init()
     {
-
         $this->activeQuery = WallEntry::find();
 
         // If no user is set, take current if logged in
@@ -142,6 +142,15 @@ class Stream extends \yii\base\Action
 
         $this->setupCriteria();
         $this->setupFilters();
+
+        $wallContentMembership = WallContentMembership::tableName();
+        $this->activeQuery->leftJoin(
+            $wallContentMembership,
+            "wall_entry.wall_id=$wallContentMembership.wall_id"
+        );
+
+        $this->activeQuery->andWhere("$wallContentMembership.id IS NOT NULL");
+        $this->activeQuery->andWhere(["$wallContentMembership.user_id" => $this->user->id]);
     }
 
     public function setupCriteria()

@@ -3,22 +3,35 @@
 namespace intelligen\modules\pcontent\widgets;
 
 use Yii;
+use yii\db\Query;
 
 class WallEntry extends \humhub\modules\content\widgets\WallEntry
 {
+    const TEMPLATES = [
+        'form' => 'formEntry',
+        'activity' => 'activityEntry',
+        'message' => 'messageEntry',
+    ];
 
     public $editRoute = "/pcontent/content/edit";
     
     public function run()
     {
-        //We don't want an edit menu when the poll is closed
-        if(version_compare(Yii::$app->version, '1.0.0-beta.4', 'lt') || $this->contentObject->closed) {
-            $this->editRoute = '';
-        }
+        $content = $this->contentObject;
+        $data = json_decode($content->value);
 
-        return $this->render('entry', array('poll' => $this->contentObject,
-                    'user' => $this->contentObject->content->user,
-                    'contentContainer' => $this->contentObject->content->container));
+        if (isset(self::TEMPLATES[$content->type])) {
+            $template = self::TEMPLATES[$content->type];
+        } else {
+            $template = 'errorEntry';
+        }
+        
+        return $this->render($template, [
+            'content' => $content,
+            'data' => $data,
+            'user' => $this->contentObject->content->user,
+            'space' => $this->contentObject->content->container
+        ]);
     }
 
 }

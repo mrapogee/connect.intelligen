@@ -2587,3 +2587,15 @@ img.bounceIn {
 .PSpaceForm > .message {
   flex-grow: 1;
 }
+.panel-space-walls > .panel-body > .header {
+  display: flex;
+}
+.panel-space-walls > .panel-body > .header > h4 {
+  flex-grow: 1;
+}
+.panel-space-walls > .panel-body > .header > a {
+  align-self: center;
+}
+.hidden {
+  display: none;
+}

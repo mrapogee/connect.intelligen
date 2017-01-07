@@ -436,6 +436,35 @@ class Content extends \humhub\components\ActiveRecord
         return $wallEntry;
     }
 
+    public function ensureOnWall ($wallId = 0) {
+        if ($wallId == 0) {
+            $contentContainer = $this->getContainer();
+            $wallId = $contentContainer->wall_id;
+        }
+
+        // Skip dublicates
+        $wallEntry = WallEntry::findOne(['wall_id' => $wallId, 'content_id' => $this->id]);
+        if ($wallEntry !== null) {
+            return $wallEntry;
+        }
+
+        return $this->addToWall($wallId);
+    }
+
+    public function addToWallWithTitle($title) {
+        $wall = Wall::findOne([
+            'object_model' => $this->container::className(),
+            'object_id' => $this->container->id,
+            'title' => $title
+        ]);
+
+        if ($wall !== null) {
+            return $this->ensureOnWall($wall->id);
+        }
+
+        return null;
+    }
+
     /**
      * Returns the Wall Entries, which belongs to this Content.
      *

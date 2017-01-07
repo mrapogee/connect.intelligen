@@ -11,6 +11,7 @@ namespace humhub\modules\post\controllers;
 use Yii;
 use \humhub\modules\post\models\Post;
 use yii\web\HttpException;
+use humhub\modules\space\models\Space;
 
 /**
  * @package humhub.modules_core.post.controllers
@@ -24,6 +25,9 @@ class PostController extends \humhub\modules\content\components\ContentContainer
         // Check createPost Permission
         if (!$this->contentContainer->permissionManager->can(new \humhub\modules\post\permissions\CreatePost())) {
             return [];
+        }
+
+        if ($this->contentContainer instanceof Space) {
         }
 
         $post = new Post();

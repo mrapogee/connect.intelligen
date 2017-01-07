@@ -12,10 +12,12 @@ class Form extends \humhub\modules\post\widgets\Form {
     public function renderForm()
     {
         $user = Yii::$app->user;
+        $elevated = $user->getIdentity()->getGroups()->where(['name' => 'Elevated'])->count() > 0;
 
         return $this->render('form', [
             'space' => $this->contentContainer,
-            'user' => $user
+            'user' => $user,
+            'elevated' => $elevated,
         ]);
     }
 }

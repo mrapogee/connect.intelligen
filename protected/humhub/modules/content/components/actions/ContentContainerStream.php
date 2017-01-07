@@ -21,7 +21,7 @@
 namespace humhub\modules\content\components\actions;
 
 use Yii;
-use humhub\modules\content\models\Content;
+use intelligen\modules\pcontent\models\WallContentMembership;
 
 /**
  * ContentContainerStreamAction
@@ -40,11 +40,15 @@ class ContentContainerStream extends Stream
     {
         parent::init();
 
+        $wallContentMembership = WallContentMembership::tableName();
+
         // Get Content Container by Param
-        if ($this->contentContainer->wall_id != "") {
-            $this->activeQuery->andWhere("wall_entry.wall_id = " . $this->contentContainer->wall_id);
+        if ($this->contentContainer->id != "") {
+            $this->activeQuery->andWhere([
+                "$wallContentMembership.content_container_id" => $this->contentContainer->id
+            ]);
         } else {
-            Yii::warning("No wall id for content container " . get_class($this->contentContainer) . " - " . $this->contentContainer->getPrimaryKey() . " set - stopped stream action!");
+            Yii::warning("No id for content container " . get_class($this->contentContainer) . " - " . $this->contentContainer->getPrimaryKey() . " set - stopped stream action!");
             // Block further execution
             $this->activeQuery->andWhere("1=2");
         }

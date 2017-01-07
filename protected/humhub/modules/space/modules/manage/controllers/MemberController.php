@@ -17,6 +17,10 @@ use humhub\modules\space\modules\manage\components\Controller;
 use humhub\modules\space\modules\manage\models\MembershipSearch;
 use humhub\modules\user\models\User;
 use humhub\modules\space\models\Membership;
+use humhub\modules\content\models\Wall;
+use intelligen\modules\pcontent\models\WallContentMembership;
+use humhub\modules\space\models\Space;
+use yii\db\Query;
 
 
 /**
@@ -57,6 +61,73 @@ class MemberController extends Controller
                     'searchModel' => $searchModel,
                     'space' => $space
         ));
+    }
+
+    public function actionWalls() {
+        $walls = Wall::find()->where(['object_model' => Space::className(), 'object_id' => $this->contentContainer->id])->all();
+        $query = new Query();
+        $wcm = WallContentMembership::tableName();
+        $wallMembers = [];
+        $members = $query
+            ->select("profile.firstname, profile.lastname, $wcm.wall_id")
+            ->from('profile')
+            ->innerJoin($wcm, "profile.user_id=$wcm.user_id")
+            ->andWhere(["$wcm.content_container_id" => $this->contentContainer->id])
+            ->all();
+
+        foreach ($members as $member) {
+            $wall = $member['wall_id'];
+            if (!isset($wallMembers[$wall])) {
+                $wallMembers[$wall] = [];
+            }
+
+            $wallMembers[$wall][] = "$member[firstname] $member[lastname]";
+        }
+
+        return $this->render(
+            'walls',
+            [ 'walls' => $walls, 'space' => $this->contentContainer, 'members' => $wallMembers ]
+        );
+    }
+
+    public function actionEditWall($id = '') {
+        if ($id === '') {
+            $wall = new Wall();
+        } else {
+            $wall = Wall::findOne($id);
+            if (!$wall) {
+                $wall = new Wall();
+            }
+        }
+
+        if (isset(Yii::$app->request->post()['Wall'])) {
+            $id = Yii::$app->request->post()['Wall']['id'];
+            if ($id != '') {
+                $wall = Wall::findOne($id);
+            }
+
+            $wall->load(Yii::$app->request->post());
+            $wall->title = Yii::$app->request->post()['Wall']['title'];
+
+            if ($wall->validate() && $wall->save()) {
+                return $this->htmlRedirect($this->contentContainer->createUrl('walls'));
+            }
+        }
+
+        return $this->render(
+            'editWall',
+            [ 'wall' => $wall, 'space' => $this->contentContainer ]
+        );
+    }
+
+    public function actionDeleteWall($id) {
+        $wall = Wall::findOne($id);
+
+        if ($wall) {
+            $wall->delete();
+        }
+
+        return $this->htmlRedirect($this->contentContainer->createUrl('walls'));
     }
 
     /**

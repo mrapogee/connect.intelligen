@@ -16,6 +16,7 @@ use humhub\modules\space\components\UrlValidator;
 use humhub\modules\content\models\Content;
 use humhub\modules\content\components\ContentContainerActiveRecord;
 use humhub\modules\user\models\User;
+use intelligen\modules\pcontent\models\WallContentMembership;
 use yii\helpers\Url;
 
 /**
@@ -208,6 +209,10 @@ class Space extends ContentContainerActiveRecord implements \humhub\modules\sear
         \humhub\modules\user\models\Follow::deleteAll(['object_id' => $this->id, 'object_model' => 'Space']);
 
         foreach (Membership::findAll(['space_id' => $this->id]) as $spaceMembership) {
+            $spaceMembership->delete();
+        }
+
+        foreach (WallContentMembership::findAll(['content_container_id' => $this->id]) as $spaceMembership) {
             $spaceMembership->delete();
         }
 

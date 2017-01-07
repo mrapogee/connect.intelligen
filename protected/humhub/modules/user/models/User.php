@@ -127,6 +127,11 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
         return $this->_isSystemAdmin;
     }
 
+    public function isElevated()
+    {
+        return $this->getGroups()->where(['name' => 'Elevated'])->count() > 0;
+    }
+
     /**
      * @inheritdoc
      */

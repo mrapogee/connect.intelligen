@@ -33,7 +33,7 @@ class Wall extends ActiveRecord
         return [
             [['object_model', 'object_id'], 'required'],
             [['object_id'], 'integer'],
-            [['object_model'], 'string', 'max' => 50]
+            [['object_model', 'title'], 'string', 'max' => 50]
         ];
     }
 
@@ -46,6 +46,7 @@ class Wall extends ActiveRecord
             'id' => 'ID',
             'object_model' => 'Object Model',
             'object_id' => 'Object ID',
+            'title' => 'Title',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

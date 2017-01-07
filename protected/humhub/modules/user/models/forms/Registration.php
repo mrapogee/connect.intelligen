@@ -242,7 +242,6 @@ class Registration extends HForm
         }
 
         if ($this->models['User']->save()) {
-
             // Save User Profile
             $this->models['Profile']->user_id = $this->models['User']->id;
             $this->models['Profile']->save();

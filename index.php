@@ -19,7 +19,8 @@ $config = yii\helpers\ArrayHelper::merge(
     require(__DIR__ . '/protected/humhub/config/web.php'),
     (is_readable(__DIR__ . '/protected/config/dynamic.php')) ? require(__DIR__ . '/protected/config/dynamic.php') : [],
     require(__DIR__ . '/protected/config/common.php'),
-    require(__DIR__ . '/protected/config/web.php')
+    require(__DIR__ . '/protected/config/web.php'),
+    (is_readable(__DIR__ . '/protected/config/secret.php')) ? require(__DIR__ . '/protected/config/secret.php') : []
 );
 
 (new humhub\components\Application($config))->run();

@@ -43,6 +43,7 @@ class MemberMenu extends \humhub\widgets\BaseMenu
             'isActive' => (Yii::$app->controller->action->id == 'index' && Yii::$app->controller->id === 'member'),
         ));
 
+ 
         if ($this->countPendingInvites() != 0) {
             $this->addItem(array(
                 'label' => Yii::t('SpaceModule.widgets_SpaceMembersMenu', 'Pending Invites') . '&nbsp;&nbsp;<span class="label label-danger">'.$this->countPendingInvites().'</span>',
@@ -68,6 +69,13 @@ class MemberMenu extends \humhub\widgets\BaseMenu
                 'isActive' => (Yii::$app->controller->action->id == 'change-owner'),
             ));
         }
+
+        $this->addItem(array(
+            'label' => 'Walls',
+            'url' => $this->space->createUrl('/space/manage/member/walls'),
+            'sortOrder' => 600,
+            'isActive' => (Yii::$app->controller->action->id == 'walls' && Yii::$app->controller->id === 'member'),
+        ));
 
 
         parent::init();
