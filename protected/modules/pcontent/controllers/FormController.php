@@ -24,7 +24,7 @@ class FormController extends RestController {
         $post = Yii::$app->request->post();
         $request = json_decode($post['rawRequest']);
 
-        $user = User::findOne(5);
+        $user = User::findOne(Yii::$app->params['adminID']);
         Yii::$app->user->switchIdentity($user, 0);
 
         foreach ($request as $key => $val) {

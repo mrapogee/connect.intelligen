@@ -35,7 +35,7 @@ class Content extends ContentActiveRecord {
         );
 
         // Log user in        
-        $user = User::findOne(5);
+        $admin = User::findOne(Yii::$app->params['adminID']);
         Yii::$app->user->switchIdentity($user, 0);
 
         // Get content container

@@ -22,6 +22,7 @@ namespace humhub\modules\content\components\actions;
 
 use Yii;
 use intelligen\modules\pcontent\models\WallContentMembership;
+use humhub\modules\content\models\Content;
 
 /**
  * ContentContainerStreamAction

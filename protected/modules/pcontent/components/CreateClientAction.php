@@ -28,7 +28,7 @@ class CreateClientAction extends \yii\base\Action {
         $data = $this->getData();
         $response = Yii::$app->getResponse();
         
-        $admin = User::findOne(5);
+        $admin = User::findOne(Yii::$app->params['adminID']);
         Yii::$app->user->switchIdentity($admin, 0);
 
         $user = User::findOne(['email' => $data['email']]);
