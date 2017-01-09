@@ -9,6 +9,16 @@ class JotClient {
      * Private ctor so nobody else can instance it
      *
      */
+
+    const ADDRESS_MAPPINGS = [
+        'street name' => 'street_name',
+        'house number' => 'street_number',
+        'city' => 'city',
+        'state' => 'state',
+        'postal code' => 'postal',
+        'country' => 'country'
+    ];
+     
     private function __construct()
     {
 
@@ -20,6 +30,28 @@ class JotClient {
             $inst = new JotClient();
         }
         return $inst;
+    }
+
+    public static function parseAddress (string $addressString) {
+        $addressParts = preg_split("/\n/", $addressString);
+
+        $address = [];
+        foreach ($addressParts as $part) {
+            list( $key, $value ) = explode(':', $part);
+            $key = trim(strtolower($key));
+            $value = trim($value);
+
+            // Set value
+            if (isset(self::ADDRESS_MAPPINGS[$key])) {
+                $address[self::ADDRESS_MAPPINGS[$key]] = $value;
+            }
+        }
+
+        if (isset($address['street_name']) && isset($address['street_number'])) {
+            $address['street_address'] = "$address[street_number] $address[street_name]";
+        }
+
+        return $address;
     }
 
     public function makeUrl($endpoint) 

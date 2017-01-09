@@ -31,6 +31,11 @@ class Post extends ContentActiveRecord implements Searchable
      * @inheritdoc
      */
     public $wallEntryClass = 'humhub\modules\post\widgets\WallEntry';
+    
+    /**
+     * @inheritdoc
+     */
+    public $autoAddToWall = false;
 
     /**
      * @inheritdoc

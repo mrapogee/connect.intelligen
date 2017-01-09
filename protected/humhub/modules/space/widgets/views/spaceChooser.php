@@ -82,10 +82,10 @@ $this->registerJsVar('scSpaceListUrl', Url::to(['/space/list', 'ajax' => 1]));
                     <?php
                     $plusIcon = '<i class="fa fa-plus"></i>';
 
-                    echo Html::a("$plusIcon Client", Url::to(['/space/create/create']), array('class' => 'btn btn-info', 'data-target' => '#globalModal'));
+                    echo Html::a("$plusIcon Client", Url::to(['/pcontent/create/create-client']), array('class' => 'btn btn-info', 'data-target' => '#globalModal'));
                     ?>
                     <?php
-                    echo Html::a("$plusIcon Project", Url::to(['/space/create/create']), array('class' => 'btn btn-default', 'data-target' => '#globalModal'));
+                    echo Html::a("$plusIcon Project", Url::to(['/pcontent/create/create-project']), array('class' => 'btn btn-default', 'data-target' => '#globalModal'));
                     ?>
 
                 </div>

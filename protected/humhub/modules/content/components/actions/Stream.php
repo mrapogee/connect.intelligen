@@ -151,6 +151,11 @@ class Stream extends \yii\base\Action
 
         $this->activeQuery->andWhere("$wallContentMembership.id IS NOT NULL");
         $this->activeQuery->andWhere(["$wallContentMembership.user_id" => $this->user->id]);
+
+        $this->activeQuery->innerJoin(
+            "(SELECT wall_entry.content_id, MIN(wall_entry.id) min_id FROM wall_entry GROUP BY wall_entry.content_id) unique_content",
+            "wall_entry.id=unique_content.min_id"
+        );
     }
 
     public function setupCriteria()

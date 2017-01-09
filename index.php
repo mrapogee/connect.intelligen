@@ -13,7 +13,6 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 require(__DIR__ . '/protected/vendor/autoload.php');
 require(__DIR__ . '/protected/vendor/yiisoft/yii2/Yii.php');
 
-
 $config = yii\helpers\ArrayHelper::merge(
     require(__DIR__ . '/protected/humhub/config/common.php'),
     require(__DIR__ . '/protected/humhub/config/web.php'),

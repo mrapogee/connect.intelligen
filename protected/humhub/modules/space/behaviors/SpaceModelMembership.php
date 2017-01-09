@@ -14,6 +14,7 @@ use humhub\modules\user\models\User;
 use humhub\modules\space\models\Space;
 use humhub\modules\space\models\Membership;
 use humhub\modules\user\models\Invite;
+use intelligen\modules\pcontent\models\WallContentMembership;
 
 /**
  * SpaceModelMemberBehavior bundles all membership related methods of the Space model.
@@ -398,6 +399,16 @@ class SpaceModelMembership extends Behavior
         $notificationApprovalRequest->source = $this->owner;
         $notificationApprovalRequest->originator = $user;
         $notificationApprovalRequest->delete();
+
+        $defaultWall = $this->owner->wall_id;
+
+        if ($defaultWall !== null) {
+            $wallMember = new WallContentMembership();
+            $wallMember->content_container_id = $this->owner->id;
+            $wallMember->user_id = $userId;
+            $wallMember->wall_id = $defaultWall;
+            $wallMember->save();
+        }
     }
 
     /**

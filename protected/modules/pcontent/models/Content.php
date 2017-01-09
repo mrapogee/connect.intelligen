@@ -19,7 +19,7 @@ class Content extends ContentActiveRecord {
     const GROUP_OWNERS = 'intelligen_special_content_for_groups';
 
     public $wallEntryClass = 'intelligen\modules\pcontent\widgets\WallEntry';
-    public $autoAddToWall = true;
+    public $autoAddToWall = false;
     public $data = [];
     public $customWallManagement = true;
 
