@@ -6,7 +6,7 @@ use yii\helpers\Html;
 
 if ($membership === null) {
     if ($space->canJoin()) {
-        if ($space->join_policy == Space::JOIN_POLICY_APPLICATION) {
+        if (!$space->canJoinFree()) {
             echo Html::a(Yii::t('SpaceModule.widgets_views_membershipButton', 'Request membership'), $space->createUrl('/space/membership/request-membership-form'), array('id' => 'requestMembershipButton', 'class' => 'btn btn-primary', 'data-target' => '#globalModal'));
         } else {
             echo Html::a(Yii::t('SpaceModule.widgets_views_membershipButton', 'Become member'), $space->createUrl('/space/membership/request-membership'), array('id' => 'requestMembershipButton', 'class' => 'btn btn-primary', 'data-method' => 'POST'));

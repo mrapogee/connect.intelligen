@@ -238,13 +238,20 @@ class Space extends ContentContainerActiveRecord implements \humhub\modules\sear
             return false;
         }
 
+        
+
         // Take current userid if none is given
         if ($userId == "")
             $userId = Yii::$app->user->id;
 
+
         // Checks if User is already member
         if ($this->isMember($userId))
             return false;
+
+        if (Yii::$app->user->getIdentity()->isSystemAdmin()) {
+            return true;
+        }
 
         // No one can join
         if ($this->join_policy == self::JOIN_POLICY_NONE)
@@ -269,6 +276,11 @@ class Space extends ContentContainerActiveRecord implements \humhub\modules\sear
         // Checks if User is already member
         if ($this->isMember($userId))
             return false;
+
+        if (Yii::$app->user->getIdentity()->isSystemAdmin()) {
+            return true;
+        }
+
 
         // No one can join
         if ($this->join_policy == self::JOIN_POLICY_FREE)

@@ -36,6 +36,14 @@ class Events extends \yii\base\Object {
                 'icon' => '<i class="fa fa-database"></i>',
                 'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
             ]);
+
+            $menu->addItem([
+                'label' => 'Bidders',
+                'group' => 'modules',
+                'url' => $space->createUrl('/pcontent/content/log-forms'),
+                'icon' => '<i class="fa fa-database"></i>',
+                'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
+            ]);
         }
     }
 }
