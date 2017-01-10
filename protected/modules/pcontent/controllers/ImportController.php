@@ -68,7 +68,7 @@ class ImportController extends RestController {
                 $profile->$key = $value;
             }
 
-            if (!$profile->validate() || !$profile->save()) {
+            if (!$profile->validate() || !$profile->update()) {
                 return ['errors' => $profile->getErrors(), 'row' => $row];
             }
         }
