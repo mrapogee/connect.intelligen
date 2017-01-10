@@ -55,7 +55,7 @@ class ImportController extends RestController {
             $client->createClient();
 
             $user = $client->clientUser;
-            if ($user->clientUser == null) {
+            if ($user == null) {
                 $count++;
                 continue;
             }
