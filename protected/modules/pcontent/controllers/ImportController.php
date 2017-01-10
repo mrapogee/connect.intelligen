@@ -62,6 +62,9 @@ class ImportController extends RestController {
             $row['email'] = null;
 
             foreach ($row as $key => $value) {
+                if ($key === 'email') {
+                    continue;
+                }
                 $profile->$key = $value;
             }
 
