@@ -33,10 +33,6 @@ class ImportController extends RestController {
 
             $client = new Client();
 
-            if (!isset($row['firstname'])) {
-                $count++;
-                continue;
-            }
             $client->firstname = $row['firstname'];
             $client->lastname = $row['lastname'];
             $client->street_address = $row['street'];
@@ -58,7 +54,14 @@ class ImportController extends RestController {
 
             $client->createClient();
 
-            $profile = $client->clientUser->profile;
+            $user = $client->clientUser;
+            if ($user->clientUser == null) {
+                $count++;
+                continue;
+            }
+            $profile = $user->profile;
+
+
             $row['email'] = null;
 
             foreach ($row as $key => $value) {
