@@ -37,7 +37,7 @@ class CreatePublicSpace extends \humhub\libs\BasePermission
     /**
      * @inheritdoc
      */
-    protected $defaultState = self::STATE_ALLOW;
+    protected $defaultState = self::STATE_DENY;
     
     public function __construct($config = array()) {
         parent::__construct($config);

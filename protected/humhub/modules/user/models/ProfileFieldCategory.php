@@ -8,6 +8,7 @@
 
 namespace humhub\modules\user\models;
 
+use Yii;
 use humhub\components\ActiveRecord;
 
 /**
@@ -35,6 +36,17 @@ class ProfileFieldCategory extends ActiveRecord
     public static function tableName()
     {
         return 'profile_field_category';
+    }
+
+    public static function find() {
+        $query = parent::find();
+
+        if (!Yii::$app->user->getIdentity()->isElevated()) {
+            $hiddenCategory = Yii::$app->params['elevatedProfileField'];
+            $query->andWhere('id != :hidden', ['hidden' => $hiddenCategory]);
+        }
+
+        return $query;
     }
 
     /**

@@ -27,16 +27,29 @@ class Client extends Model {
     public $phone_number;
     public $agent_email;
 
+    public $notifications = true;
+    public $createSpace = true;
     public $space;
+    public $clientUser;
 
     function rules () {
-        return [
-            [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number', 'agent_email'],
-            'string'],
-            [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number'],
-            'required'],
-            [['agent_email', 'email'], 'email']
-        ];
+        if ($this->createSpace) {
+            return [
+                [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number', 'agent_email'],
+                'string'],
+                [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number'],
+                'required'],
+                [['agent_email', 'email'], 'email']
+            ];
+        } else {
+            return [
+                [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number', 'agent_email'],
+                'string'],
+                [['firstname', 'lastname', 'email'],
+                'required'],
+                [['agent_email', 'email'], 'email']
+            ];
+        }
     }
 
     function attributeLabels () {
@@ -60,6 +73,11 @@ class Client extends Model {
                 return ['errors' => $user->getErrors()];
             }
 
+            if (!$this->notifications) {
+                Yii::$app->getModule('notification')->settings->contentContainer($user)->set('receive_email_notifications', User::RECEIVE_EMAIL_NEVER);
+                Yii::$app->getModule('activity')->settings->contentContainer($user)->set('receive_email_activities', User::RECEIVE_EMAIL_NEVER);
+            }
+
             $password = new Password();
             $password->scenario = 'registration';
             $security = new yii\base\Security();
@@ -81,6 +99,10 @@ class Client extends Model {
             if (!$profile->validate() || !$profile->save()) {
                 return ['errors' => $profile->getErrors()];
             }
+        }
+
+        if (!$this->createSpace) {
+            return $this->finish(null, $user);
         }
 
         $spaceName = "Client - $this->lastname, $this->street_address";
@@ -145,7 +167,12 @@ class Client extends Model {
             }
         }
 
+        return $this->finish($space, $user);
+    }
+
+    private function finish ($space, $clientUser) {
         $this->space = $space;
+        $this->clientUser = $clientUser;
 
         return ['success' => true, 'errors' => []];
     }
