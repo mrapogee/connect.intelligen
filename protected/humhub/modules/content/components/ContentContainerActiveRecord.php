@@ -140,10 +140,10 @@ class ContentContainerActiveRecord extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-
             $wall = new Wall();
             $wall->object_model = $this->className();
             $wall->object_id = $this->id;
+            $wall->title = 'Members';
             $wall->save();
             $this->wall_id = $wall->id;
             $this->update(false, ['wall_id']);

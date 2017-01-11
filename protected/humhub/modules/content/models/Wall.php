@@ -39,9 +39,6 @@ class Wall extends ActiveRecord
         ];
     }
 
-    public function beforeSave ($insert) {
-    }
-
     /**
      * @inheritdoc
      */
