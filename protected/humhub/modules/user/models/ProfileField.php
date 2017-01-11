@@ -75,7 +75,7 @@ class ProfileField extends ActiveRecord
     public static function find() {
         $query = parent::find();
 
-        if (!Yii::$app->user->getIdentity()->isElevated()) {
+        if (Yii::$app->user->getIdentity() === null || !Yii::$app->user->getIdentity()->isElevated()) {
             $hiddenCategory = intval(Yii::$app->params['elevatedProfileField']);
 
             // Throws error when I use bound sql, am sanitizing with intval above
