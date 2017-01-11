@@ -95,6 +95,12 @@ class Client extends Model {
             $profile->firstname = $this->firstname;
             $profile->lastname = $this->lastname;
             $profile->user_id = $user->id;
+            $profile->street = $this->street_address;
+            $profile->city = $this->city;
+            $profile->state = $this->state;
+            $profile->zip = $this->postal_code;
+            $profile->country = $this->country;
+            $profile->mobile = $this->phone_number;
 
             if (!$profile->validate() || !$profile->save()) {
                 return ['errors' => $profile->getErrors()];
