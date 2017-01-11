@@ -20,7 +20,7 @@ class Events extends \yii\base\Object {
 
         $user = Yii::$app->user->getIdentity();
 
-        if ($user->isElevated() && $space-isModuleEnabled('pcontent')) {
+        if ($user->isElevated() && $space->isModuleEnabled('pcontent')) {
             $menu->addItem([
                 'label' => 'Activity',
                 'group' => 'modules',

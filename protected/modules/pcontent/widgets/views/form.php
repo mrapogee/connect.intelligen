@@ -24,7 +24,7 @@ use yii\helpers\Html;
     ?>
 </div>
 
-<?php if ($elevated): ?>
+<?php if ($elevated && $space->isModuleEnabled('pcontent')): ?>
     <div class="btn-group activity">
         <button class="btn btn-default" title="Send Email">
             <i class="fa fa-envelope"></i>
