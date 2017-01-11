@@ -20,7 +20,7 @@ class Events extends \yii\base\Object {
 
         $user = Yii::$app->user->getIdentity();
 
-        if ($user->getGroups()->where(['name' => 'Elevated'])->count() > 0) {
+        if ($user->isElevated() && $space-isModuleEnabled('pcontent')) {
             $menu->addItem([
                 'label' => 'Activity',
                 'group' => 'modules',
@@ -37,13 +37,13 @@ class Events extends \yii\base\Object {
                 'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
             ]);
 
-            $menu->addItem([
+            /*$menu->addItem([
                 'label' => 'Bidders',
                 'group' => 'modules',
                 'url' => $space->createUrl('/pcontent/content/log-forms'),
                 'icon' => '<i class="fa fa-database"></i>',
                 'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
-            ]);
+            ]);*/
         }
     }
 }
