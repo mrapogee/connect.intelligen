@@ -165,6 +165,12 @@ class Space extends ContentContainerActiveRecord implements \humhub\modules\sear
             $membership->group_id = self::USERGROUP_ADMIN;
             $membership->save();
 
+            $wallMember = new WallContentMembership();
+            $wallMember->content_container_id = $this->id;
+            $wallMember->user_id = $user->id;
+            $wallMember->wall_id = $this->wall_id;
+            $wallMember->save();
+
             $activity = new \humhub\modules\space\activities\Created;
             $activity->source = $this;
             $activity->originator = $user;
