@@ -17,6 +17,8 @@ use humhub\components\ActiveRecord;
  */
 class Wall extends ActiveRecord
 {
+    public $wall;
+
     /**
      * @inheritdoc
      */
@@ -35,6 +37,9 @@ class Wall extends ActiveRecord
             [['object_id'], 'integer'],
             [['object_model', 'title'], 'string', 'max' => 50]
         ];
+    }
+
+    public function beforeSave ($insert) {
     }
 
     /**

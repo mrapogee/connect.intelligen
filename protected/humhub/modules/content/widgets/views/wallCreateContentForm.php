@@ -91,6 +91,8 @@ use humhub\modules\space\models\Space;
                 <!-- public checkbox -->
                 <?php echo Html::checkbox("visibility", "", array('id' => 'contentForm_visibility', 'class' => 'contentForm hidden')); ?>
 
+                <?php echo Html::textInput("selected_walls", implode(',', $defaultWalls), array('id' => 'contentForm_selected_walls', 'class' => 'contentForm hidden')); ?>
+
                 <!-- content sharing -->
                 <div class="pull-right">
 
@@ -112,6 +114,15 @@ use humhub\modules\space\models\Space;
                                                 class="fa fa-unlock"></i> <?php echo Yii::t('ContentModule.widgets_views_contentForm', 'Make public'); ?>
                                         </a>
                                     </li>
+                                    <?php if (isset($walls)): ?>
+                                    <?php foreach ($walls as $wall): ?>
+                                    <li>
+                                        <a id="contentForm_wall_visibility_<?= $wall->id ?>_entry" href="javascript:toggleWall('<?= $wall->id ?>');">
+                                            <i class="fa fa-square-o"></i> <?php echo "Share with $wall->title" ?>
+                                        </a>
+                                    </li>
+                                    <?php endforeach; ?>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </ul>
                         </li>
@@ -180,6 +191,45 @@ use humhub\modules\space\models\Space;
         } else {
             setPrivateVisibility();
         }
+    }
+
+    function swapClass (el, start, end) {
+            el.removeClass(start);
+            el.addClass(end);
+    }
+
+    function getWallBox (id) {
+        return $('#contentForm_wall_visibility_' + id + '_entry > i')
+    }
+
+    function setWalls (walls) {
+        allWalls.forEach(function (wall) {
+            if (walls.indexOf(wall) < 0) {
+                swapClass(getWallBox(wall), 'fa-check-square-o', 'fa-square-o');
+            } else {
+                swapClass(getWallBox(wall), 'fa-square-o', 'fa-check-square-o');
+            }
+        })
+
+        wallSelections.val(walls.join(','))
+    }
+
+    var defaultWalls = <?= json_encode(array_map(function ($wall) { return (string) $wall; }, $defaultWalls)) ?>;
+    var allWalls = <?= json_encode(array_map(function ($wall) { return (string) $wall->id; }, $walls)) ?>;
+    var wallSelections = $('#contentForm_selected_walls');
+    setWalls(defaultWalls);
+
+    function toggleWall (id) {
+        id = String(id);
+        var selectedWalls = wallSelections.val().split(',').map(function (v) { return v.trim() });
+        var index = selectedWalls.indexOf(id);
+        if (index < 0) {
+            selectedWalls.push(id);
+        } else {
+            selectedWalls.splice(index, 1);
+        }
+
+        setWalls(selectedWalls.filter((v) => v));
     }
 
     function notifyUser() {

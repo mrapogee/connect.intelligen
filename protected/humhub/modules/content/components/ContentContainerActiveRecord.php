@@ -8,6 +8,7 @@
 
 namespace humhub\modules\content\components;
 
+use Yii;
 use humhub\libs\ProfileBannerImage;
 use humhub\libs\ProfileImage;
 use humhub\modules\user\models\User;
@@ -57,6 +58,7 @@ class ContentContainerActiveRecord extends ActiveRecord
      * @return ProfileBannerImage
      */
     public function getProfileBannerImage()
+
     {
         return new ProfileBannerImage($this->guid);
     }
@@ -113,6 +115,18 @@ class ContentContainerActiveRecord extends ActiveRecord
     public function getWallOut()
     {
         return "Default Wall Output for Class " . get_class($this);
+    }
+
+    public function getWalls () {
+        return Wall::find()->where(['object_model' => get_class($this), 'object_id' => $this->id])->all();
+    }
+
+    public function getShareableWalls () {
+        if (Yii::$app->user->getIdentity()->isElevated()) {
+            return $this->getWalls();
+        } else {
+            return [];
+        }
     }
     
     public static function findByGuid($token)

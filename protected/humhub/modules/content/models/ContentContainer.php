@@ -75,5 +75,4 @@ class ContentContainer extends \yii\db\ActiveRecord
             ]
         ];
     }
-
 }

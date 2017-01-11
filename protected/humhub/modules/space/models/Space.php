@@ -14,6 +14,7 @@ use humhub\modules\space\permissions\CreatePrivateSpace;
 use humhub\modules\space\permissions\CreatePublicSpace;
 use humhub\modules\space\components\UrlValidator;
 use humhub\modules\content\models\Content;
+use humhub\modules\content\models\Wall;
 use humhub\modules\content\components\ContentContainerActiveRecord;
 use humhub\modules\user\models\User;
 use intelligen\modules\pcontent\models\WallContentMembership;

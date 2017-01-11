@@ -70,11 +70,7 @@ class WallCreateContentForm extends Widget
         return "";
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function run()
-    {
+    public function getTemplateParams () {
         $defaultVisibility = Content::VISIBILITY_PUBLIC;
         if ($this->contentContainer instanceof Space) {
             $defaultVisibility = $this->contentContainer->getDefaultContentVisibility();
@@ -87,14 +83,24 @@ class WallCreateContentForm extends Widget
             $defaultVisibility = Content::VISIBILITY_PRIVATE;
         }
 
-        return $this->render('@humhub/modules/content/widgets/views/wallCreateContentForm', array(
-                    'form' => $this->renderForm(),
-                    'contentContainer' => $this->contentContainer,
-                    'submitUrl' => $this->contentContainer->createUrl($this->submitUrl),
-                    'submitButtonText' => $this->submitButtonText,
-                    'defaultVisibility' => $defaultVisibility,
-                    'canSwitchVisibility' => $canSwitchVisibility
-        ));
+        return [
+            'walls' => $this->contentContainer instanceof Space ? $params['walls'] = $this->contentContainer->getShareableWalls() : [],
+            'defaultWalls' => [$this->contentContainer->wall_id],
+            'form' => $this->renderForm(),
+            'contentContainer' => $this->contentContainer,
+            'submitUrl' => $this->contentContainer->createUrl($this->submitUrl),
+            'submitButtonText' => $this->submitButtonText,
+            'defaultVisibility' => $defaultVisibility,
+            'canSwitchVisibility' => $canSwitchVisibility
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function run()
+    {
+        return $this->render('@humhub/modules/content/widgets/views/wallCreateContentForm', $this->getTemplateParams());
     }
 
     /**
@@ -139,12 +145,9 @@ class WallCreateContentForm extends Widget
         if ($record->validate() && $record->save()) {
             $user = Yii::$app->user->getIdentity();
 
-            if (!isset($record->customWallManagement) || !$record->customWallMangement) {
-                if (!$user->isElevated()) {
-                    $record->content->addToWallWithTitle('Client');
-                }
-
-                $record->content->addToWallWithTitle('Agent');
+            $walls = explode(',', Yii::$app->request->post('selected_walls'));
+            foreach ($walls as $wall) {
+                $record->content->addToWall($wall);
             }
         
             return array('wallEntryId' => $record->content->getFirstWallEntryId());
