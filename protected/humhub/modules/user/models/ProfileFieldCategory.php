@@ -41,7 +41,7 @@ class ProfileFieldCategory extends ActiveRecord
     public static function find() {
         $query = parent::find();
 
-        if (!Yii::$app->user->getIdentity()->isElevated()) {
+        if (Yii::$app->user->getIdentity() === null || !Yii::$app->user->getIdentity()->isElevated()) {
             $hiddenCategory = Yii::$app->params['elevatedProfileField'];
             $query->andWhere('id != :hidden', ['hidden' => $hiddenCategory]);
         }
