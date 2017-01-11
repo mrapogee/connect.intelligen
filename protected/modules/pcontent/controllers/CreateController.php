@@ -45,7 +45,7 @@ class CreateController extends Controller {
                     $client->street_address = $user->profile->street;
                     $client->city = $user->profile->city;
                     $client->state = $user->profile->state;
-                    $client->zip = $user->profile->zip;
+                    $client->postal_code = $user->profile->zip;
                     $client->country = $user->profile->country;
                     $client->email = $user->email;
                     $client->phone_number = self::getPhone($user->profile);
