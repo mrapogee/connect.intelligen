@@ -7,6 +7,7 @@ use humhub\components\Controller;
 use intelligen\modules\pcontent\components\CreateClientAcion;
 use intelligen\modules\pcontent\models\Client;
 use intelligen\modules\pcontent\models\Project;
+use humhub\modules\user\models\User;
 
 class CreateController extends Controller {
     public $defaultAction = 'create-client';
