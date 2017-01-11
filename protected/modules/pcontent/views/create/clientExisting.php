@@ -20,7 +20,7 @@ use yii\helpers\Html;
                 echo humhub\modules\user\widgets\UserPicker::widget(array(
                     'inputId' => 'client',
                     'maxUsers' => 1,
-                    'placeholderText' => Yii::t('TasksModule.views_task_edit', 'Select Client'),
+                    'placeholderText' => 'Select Profile'
                 ));
             ?>
         </div>
