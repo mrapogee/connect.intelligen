@@ -277,9 +277,21 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
      *
      * @return ActiveQueryContent
      */
-    public static function find()
+    public static function find($all = false)
     {
-        return Yii::createObject(ActiveQueryUser::className(), [get_called_class()]);
+        $yuser = Yii::$app->user;
+        $activeQuery = Yii::createObject(ActiveQueryUser::className(), [get_called_class()]);
+
+        if ($all || $yuser->getIdentity() == null || !$yuser->getIdentity()->isSystemAdmin()) {
+            return $activeQuery;
+        }
+
+        $isSpecialGroup = implode(' OR ', array_map(function ($group) { return "ogu.group_id=$group"; }, Yii::$app->params['specialGroups']));
+        $isSpecial = "EXISTS (SELECT ogu.user_id FROM group_user ogu WHERE ogu.user_id=user.id AND ($isSpecialGroup))";
+        $hasSpaceWith = "EXISTS (SELECT osm.user_id FROM space_membership osm WHERE osm.user_id=user.id AND EXISTS (SELECT tsm.user_id FROM space_membership tsm WHERE tsm.user_id=$yuser->id))";
+        $activeQuery->andWhere("($isSpecial OR $hasSpaceWith)");
+
+        return $activeQuery;
     }
 
     public function getId()
