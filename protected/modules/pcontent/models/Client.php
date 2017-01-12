@@ -37,7 +37,7 @@ class Client extends Model {
             return [
                 [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number', 'agent_email'],
                 'string'],
-                [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email', 'phone_number'],
+                [['firstname', 'lastname', 'street_address', 'city', 'state', 'country', 'postal_code', 'email'],
                 'required'],
                 [['agent_email', 'email'], 'email']
             ];
@@ -179,6 +179,11 @@ class Client extends Model {
     private function finish ($space, $clientUser) {
         $this->space = $space;
         $this->clientUser = $clientUser;
+
+        if ($space != null && $clientUser != null) {
+            $this->clientUser->profile->client_space = (string) $space->id;
+            $this->clientUser->profile->update();
+        }
 
         return ['success' => true, 'errors' => []];
     }

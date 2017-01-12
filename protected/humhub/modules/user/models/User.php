@@ -14,6 +14,7 @@ use humhub\modules\content\components\ContentContainerActiveRecord;
 
 use humhub\modules\user\components\ActiveQueryUser;
 use humhub\modules\friendship\models\Friendship;
+use humhub\modules\space\models\Space;
 
 /**
  * This is the model class for table "user".
@@ -130,6 +131,57 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
     public function isElevated()
     {
         return $this->getGroups()->where(['name' => 'Elevated'])->count() > 0;
+    }
+
+    public function loggedInUserCanResetPassword () {
+        $yuser = Yii::$app->user;
+
+        if (!$yuser->permissionmanager->can(new \intelligen\modules\pcontent\permissions\ResetPassword)) {
+            return false;
+        }
+
+        $space_id = $this->profile->client_space;
+
+        if ($space_id == null) {
+            return false;
+        }
+
+        $space = Space::findOne($space_id);
+        if ($space == null) {
+            return false;
+        }
+
+        return $space->isMember($yuser->getId());
+    }
+
+    public function loggedInUserCanEditAccount () {
+        $yuser = Yii::$app->user;
+
+        if ($yuser->id == $this->id) {
+            return true;
+        }
+
+        if (Yii::$app->user->getIdentity()->isSystemAdmin() && Yii::$app->params['user']['adminCanChangeProfileImages']) {
+            return true;
+        }
+
+        if (!$yuser->permissionmanager->can(new \intelligen\modules\pcontent\permissions\ModifyProfiles)) {
+            return false;
+        }
+
+
+        $space_id = $this->profile->client_space;
+
+        if ($space_id == null) {
+            return false;
+        }
+
+        $space = Space::findOne($space_id);
+        if ($space == null) {
+            return false;
+        }
+
+        return $space->isMember($yuser->id);
     }
 
     /**

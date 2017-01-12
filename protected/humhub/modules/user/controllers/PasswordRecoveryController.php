@@ -67,6 +67,22 @@ class PasswordRecoveryController extends Controller
         return $this->render('index', array('model' => $model));
     }
 
+    public function actionWelcomeReset () {
+        $user = User::findOne(array('guid' => Yii::$app->request->get('guid')));
+        if ($user->loggedInUserCanResetPassword()) {
+            $model = new AccountRecoverPassword();
+            $model->email = $user->email;
+            $model->recover = false;
+
+            if ($model->validate() && $model->recover()) {
+                return ['message' => 'success', 'contents' => []];
+            }
+
+            Yii::$app->getResponse()->setStatusCode(400);
+            return ['message' => 'error', 'content' => $model->getErrors()];
+        }
+    }
+
     /**
      * Resets users password based on given token
      */

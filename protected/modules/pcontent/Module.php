@@ -6,6 +6,8 @@ use intelligen\modules\pcontent\models\Content;
 use humhub\modules\space\models\Space;
 use humhub\modules\content\components\ContentContainerModule;
 use humhub\modules\content\components\ContentContainerActiveRecord;
+use intelligen\modules\pcontent\permissions\ModifyProfiles;
+use intelligen\modules\pcontent\permissions\ResetPassword;
 
 class Module extends ContentContainerModule {
     /**
@@ -39,13 +41,16 @@ class Module extends ContentContainerModule {
      */
     public function getPermissions($contentContainer = null)
     {
-        if ($contentContainer instanceof \humhub\modules\space\models\Space) {
+        /*if ($contentContainer instanceof \humhub\modules\space\models\Space) {
             return [
                 new permissions\CreateContent()
             ];
-        }
+        }*/
 
-        return [];
+        return [
+            new \intelligen\modules\pcontent\permissions\ResetPassword,
+            new \intelligen\modules\pcontent\permissions\ModifyProfiles
+        ];
     }
 
     /**

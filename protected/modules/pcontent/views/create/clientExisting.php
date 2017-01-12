@@ -14,7 +14,7 @@ use yii\helpers\Html;
         <div class="modal-body">
             <hr>
             <br>
-            <?= Html::textInput('selected_user', '', ['placeholder' => '', 'id' => 'client']); ?>
+            <?= $form->field($model, 'selected_user')->textInput(['placeholder' => '', 'id' => 'client']); ?>
             <?php
                 // attach mention widget to it
                 echo humhub\modules\user\widgets\UserPicker::widget(array(
@@ -61,7 +61,7 @@ use yii\helpers\Html;
     $('.tt').tooltip({html: false});
 
     // Shake modal after wrong validation
-    <?php if ($client->hasErrors()) { ?>
+    <?php if ($model->hasErrors()) { ?>
             $('.modal-dialog').removeClass('fadeIn');
             $('.modal-dialog').addClass('shake');
     <?php } ?>

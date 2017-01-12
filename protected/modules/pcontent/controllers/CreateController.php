@@ -6,6 +6,7 @@ use Yii;
 use humhub\components\Controller;
 use intelligen\modules\pcontent\components\CreateClientAcion;
 use intelligen\modules\pcontent\models\Client;
+use intelligen\modules\pcontent\models\CreateExistingClient;
 use intelligen\modules\pcontent\models\Project;
 use humhub\modules\user\models\User;
 
@@ -16,55 +17,14 @@ class CreateController extends Controller {
         return $this->renderAjax('createOptions');
     }
 
-    static function getPhone ($profile) {
-       $potens = ['phone_work', 'phone_private', 'mobile']; 
-
-       foreach ($potens as $option) {
-           if (isset($profile->$option)) {
-               return $option;
-           }
-       }
-
-       return null;
-    }
-
     public function actionCreateClientExisting () {
-        $client = new Client();
+        $model = new CreateExistingClient();
 
-        $selectedUser = Yii::$app->request->post('selected_user');
-        if ($selectedUser != null) {
-            $userGuid = explode(",", $selectedUser)[0];
-            $userGuid = preg_replace("/[^A-Za-z0-9\-]/", '', $userGuid);
-
-            if ($userGuid != "") {
-                $user = User::findOne(['guid' => $userGuid]);
-
-                if ($user != null) {
-                    $client->firstname = $user->profile->firstname;
-                    $client->lastname = $user->profile->lastname;
-                    $client->street_address = $user->profile->street;
-                    $client->city = $user->profile->city;
-                    $client->state = $user->profile->state;
-                    $client->postal_code = $user->profile->zip;
-                    $client->country = $user->profile->country;
-                    $client->email = $user->email;
-                    $client->phone_number = self::getPhone($user->profile);
-
-                    if ($client->validate()) {
-                        $result = $client->createClient();
-                        if (isset($result['success']) && $result['success']) {
-                            return $this->htmlRedirect($client->space->getUrl());
-                        } else {
-                            return $this->actionProblem($result);
-                        }
-                    }
-                }
-            }
-
-            $client->addError('firstname', 'Please select a valid user. Make sure the profile has first and last names, an address and a email');
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->save()) {
+            return $this->htmlRedirect($model->client->space->getUrl());
         }
 
-        return $this->renderAjax('clientExisting', ['client' => $client]);
+        return $this->renderAjax('clientExisting', ['model' => $model]);
     }
 
     public function actionCreateClient () {

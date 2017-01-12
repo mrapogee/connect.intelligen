@@ -16,19 +16,29 @@ class AccountRecoverPassword extends \yii\base\Model
 
     public $verifyCode;
     public $email;
+    public $recover = true;
 
     /**
      * Declares the validation rules.
      */
     public function rules()
     {
-        return array(
-            array('email', 'required'),
-            array('email', 'email'),
-            array('email', 'canRecoverPassword'),
-            array('verifyCode', 'captcha', 'captchaAction' => '/user/auth/captcha'),
-            array('email', 'exist', 'targetClass' => User::className(), 'targetAttribute' => 'email', 'message' => Yii::t('UserModule.forms_AccountRecoverPasswordForm', '{attribute} "{value}" was not found!')),
-        );
+        if (Yii::$app->user->getIdentity() === null) {
+            return array(
+                array('email', 'required'),
+                array('email', 'email'),
+                array('email', 'canRecoverPassword'),
+                array('verifyCode', 'captcha', 'captchaAction' => '/user/auth/captcha'),
+                array('email', 'exist', 'targetClass' => User::className(), 'targetAttribute' => 'email', 'message' => Yii::t('UserModule.forms_AccountRecoverPasswordForm', '{attribute} "{value}" was not found!')),
+            );
+        } else {
+            return array(
+                array('email', 'required'),
+                array('email', 'email'),
+                array('email', 'canRecoverPassword'),
+                array('email', 'exist', 'targetClass' => User::className(), 'targetAttribute' => 'email', 'message' => Yii::t('UserModule.forms_AccountRecoverPasswordForm', '{attribute} "{value}" was not found!')),
+            );
+        }
     }
 
     /**
@@ -77,16 +87,31 @@ class AccountRecoverPassword extends \yii\base\Model
         $token = \humhub\libs\UUID::v4();
         Yii::$app->getModule('user')->settings->contentContainer($user)->set('passwordRecoveryToken', $token . '.' . time());
 
-        $mail = Yii::$app->mailer->compose([
-			'html' => '@humhub/modules/user/views/mails/RecoverPassword',
-			'text' => '@humhub/modules/user/views/mails/plaintext/RecoverPassword'
-		], [
-            'user' => $user,
-            'linkPasswordReset' => Url::to(["/user/password-recovery/reset", 'token' => $token, 'guid' => $user->guid], true)
-        ]);
+        if ($this->recover) {
+            $mail = Yii::$app->mailer->compose([
+                'html' => '@humhub/modules/user/views/mails/RecoverPassword',
+                'text' => '@humhub/modules/user/views/mails/plaintext/RecoverPassword'
+            ], [
+                'user' => $user,
+                'linkPasswordReset' => Url::to(["/user/password-recovery/reset", 'token' => $token, 'guid' => $user->guid], true)
+            ]);
+
+            $mail->setSubject(Yii::t('UserModule.forms_AccountRecoverPasswordForm', 'Password Recovery'));
+        } else {
+            $mail = Yii::$app->mailer->compose([
+                'html' => '@humhub/modules/user/views/mails/WelcomePassword',
+                'text' => '@humhub/modules/user/views/mails/plaintext/RecoverPassword'
+            ], [
+                'user' => $user,
+                'linkPasswordReset' => Url::to(["/user/password-recovery/reset", 'token' => $token, 'guid' => $user->guid], true)
+            ]);
+
+
+            $mail->setSubject("Setup your account on Intelligen Connect");
+        }
+
         $mail->setFrom([Yii::$app->settings->get('mailer.systemEmailAddress') => Yii::$app->settings->get('mailer.systemEmailName')]);
         $mail->setTo($user->email);
-        $mail->setSubject(Yii::t('UserModule.forms_AccountRecoverPasswordForm', 'Password Recovery'));
         $mail->send();
 
         return true;

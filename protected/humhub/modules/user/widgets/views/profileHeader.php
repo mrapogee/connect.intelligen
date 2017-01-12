@@ -208,6 +208,7 @@ if ($isProfileOwner) {
                                         array(\humhub\modules\user\widgets\ProfileEditButton::className(), array('user' => $user), array()),
                                         array(\humhub\modules\user\widgets\UserFollowButton::className(), array('user' => $user), array()),
                                         array(\humhub\modules\friendship\widgets\FriendshipButton::className(), array('user' => $user), array()),
+                                        array(\humhub\modules\user\widgets\ResetPasswordButton::className(), array('user' => $user), array()),
                                     )
                         ));
                         ?>

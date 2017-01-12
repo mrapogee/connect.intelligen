@@ -13,6 +13,7 @@ use humhub\modules\space\models\Space;
 use humhub\modules\user\models\User;
 use humhub\modules\space\models\Membership;
 use humhub\modules\friendship\models\Friendship;
+use intelligen\modules\pcontent\permissions\ResetPassword;
 
 /**
  * Displays the profile header of a user
@@ -47,14 +48,12 @@ class ProfileHeader extends \yii\base\Widget
 
         // Check if profile header can be edited
         if (!Yii::$app->user->isGuest) {
-            if (Yii::$app->user->getIdentity()->isSystemAdmin() && Yii::$app->params['user']['adminCanChangeProfileImages']) {
-                $this->isProfileOwner = true;
-            } elseif (Yii::$app->user->id == $this->user->id) {
+            if (Yii::$app->user->getIdentity()->loggedInUserCanEditAccount()) {
                 $this->isProfileOwner = true;
             }
+        } else {
+            $this->isProfileOwner = (Yii::$app->user->id == $this->user->id);
         }
-
-        $this->isProfileOwner = (Yii::$app->user->id == $this->user->id);
     }
 
     /**
@@ -79,6 +78,7 @@ class ProfileHeader extends \yii\base\Widget
         return $this->render('profileHeader', array(
                     'user' => $this->user,
                     'isProfileOwner' => $this->isProfileOwner,
+                    'canResetPassword' => $this->user->loggedInUserCanResetPassword(),
                     'friendshipsEnabled' => $friendshipsEnabled,
                     'countFriends' => $countFriends,
                     'countFollowers' => $this->user->getFollowerCount(),

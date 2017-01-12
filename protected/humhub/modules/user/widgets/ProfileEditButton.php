@@ -36,7 +36,7 @@ class ProfileEditButton extends \yii\base\Widget
 
     public function run()
     {
-        if (Yii::$app->user->isGuest || !$this->user->isCurrentUser()) {
+        if (Yii::$app->user->isGuest || !$this->user->loggedInUserCanEditAccount()) {
             return;
         }
 

@@ -51,9 +51,17 @@ class AccountController extends BaseAccountController
     /**
      * Edit Users Profile
      */
-    public function actionEdit()
+    public function actionEdit($user_id = 0)
     {
-        $user = Yii::$app->user->getIdentity();
+        if ($user_id == 0) {
+            $user_id = Yii::$app->user->id;
+        }
+
+        $user = User::findOne($user_id);
+        if (!$user->loggedInUserCanEditAccount()) {
+            return $this->redirect($user->getUrl());
+        }
+
         $user->profile->scenario = 'editProfile';
 
         // Get Form Definition
