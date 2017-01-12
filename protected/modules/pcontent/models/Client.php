@@ -73,6 +73,22 @@ class Client extends Model {
                 return ['errors' => $user->getErrors()];
             }
 
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->scenario = 'registration';
+            $profile->firstname = $this->firstname;
+            $profile->lastname = $this->lastname;
+            $profile->street = $this->street_address;
+            $profile->city = $this->city;
+            $profile->state = $this->state;
+            $profile->zip = $this->postal_code;
+            $profile->country = 'US';
+            $profile->mobile = $this->phone_number;
+
+            if (!$profile->validate() || !$profile->save()) {
+                return ['errors' => $profile->getErrors()];
+            }
+
             if (!$this->notifications) {
                 Yii::$app->getModule('notification')->settings->contentContainer($user)->set('receive_email_notifications', User::RECEIVE_EMAIL_NEVER);
                 Yii::$app->getModule('activity')->settings->contentContainer($user)->set('receive_email_activities', User::RECEIVE_EMAIL_NEVER);
@@ -90,21 +106,7 @@ class Client extends Model {
                 return ['errors' => $password->getErrors()];
             }
 
-            $profile = new Profile();
-            $profile->scenario = 'registration';
-            $profile->firstname = $this->firstname;
-            $profile->lastname = $this->lastname;
-            $profile->user_id = $user->id;
-            $profile->street = $this->street_address;
-            $profile->city = $this->city;
-            $profile->state = $this->state;
-            $profile->zip = $this->postal_code;
-            $profile->country = $this->country;
-            $profile->mobile = $this->phone_number;
-
-            if (!$profile->validate() || !$profile->save()) {
-                return ['errors' => $profile->getErrors()];
-            }
+            $user = User::findOne($user->id);
         }
 
         if (!$this->createSpace) {
@@ -179,7 +181,6 @@ class Client extends Model {
     private function finish ($space, $clientUser) {
         $this->space = $space;
         $this->clientUser = $clientUser;
-
         if ($space != null && $clientUser != null) {
             $this->clientUser->profile->client_space = (string) $space->id;
             $this->clientUser->profile->update();

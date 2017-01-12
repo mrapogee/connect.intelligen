@@ -75,11 +75,10 @@ class PasswordRecoveryController extends Controller
             $model->recover = false;
 
             if ($model->validate() && $model->recover()) {
-                return ['message' => 'success', 'contents' => []];
+                return $this->redirect($user->getUrl());
             }
 
-            Yii::$app->getResponse()->setStatusCode(400);
-            return ['message' => 'error', 'content' => $model->getErrors()];
+            return $this->redirect($user->getUrl());
         }
     }
 
