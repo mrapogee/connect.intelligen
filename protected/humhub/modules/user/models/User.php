@@ -282,7 +282,7 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
         $yuser = Yii::$app->user;
         $activeQuery = Yii::createObject(ActiveQueryUser::className(), [get_called_class()]);
 
-        if ($all || $yuser->getIdentity() == null || !$yuser->getIdentity()->isSystemAdmin()) {
+        if ($all || $yuser->getIdentity() == null || $yuser->getIdentity()->isSystemAdmin()) {
             return $activeQuery;
         }
 
