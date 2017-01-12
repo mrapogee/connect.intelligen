@@ -36,7 +36,7 @@ class ProfileController extends ContentContainerController
             ]
         ];
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -51,12 +51,26 @@ class ProfileController extends ContentContainerController
         );
     }
 
+    public function beforeAction ($action) {
+        parent::beforeAction($action);
+        $user =  User::find()->where(['id' => $this->contentContainer->id])->one();
+        if ($user === null) {
+            $this->forbidden();
+            return false;
+        }
+
+        return true;
+    }
+
+
+
     /**
      * User profile home
      * 
      * @todo Allow change of default action
      * @return string the response
      */
+
     public function actionIndex()
     {
         if ($this->module->profileDefaultRoute !== null) {
