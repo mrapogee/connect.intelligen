@@ -136,6 +136,10 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
     public function loggedInUserCanResetPassword () {
         $yuser = Yii::$app->user;
 
+        if (Yii::$app->user->getIdentity()->isSystemAdmin()) {
+            return true;
+        }
+
         if (!$yuser->permissionmanager->can(new \intelligen\modules\pcontent\permissions\ResetPassword)) {
             return false;
         }
@@ -161,7 +165,7 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
             return true;
         }
 
-        if (Yii::$app->user->getIdentity()->isSystemAdmin() && Yii::$app->params['user']['adminCanChangeProfileImages']) {
+        if (Yii::$app->user->getIdentity()->isSystemAdmin()) {
             return true;
         }
 
