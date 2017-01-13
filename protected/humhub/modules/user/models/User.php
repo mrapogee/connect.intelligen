@@ -289,7 +289,7 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
         $isSpecialGroup = implode(' OR ', array_map(function ($group) { return "ogu.group_id=$group"; }, Yii::$app->params['specialGroups']));
         $isSpecial = "EXISTS (SELECT ogu.user_id FROM group_user ogu WHERE ogu.user_id=user.id AND ($isSpecialGroup))";
         $hasSpaceWith = "EXISTS (SELECT osm.user_id FROM space_membership osm WHERE osm.user_id=user.id AND EXISTS (SELECT tsm.user_id FROM space_membership tsm WHERE tsm.user_id=$yuser->id AND osm.space_id=tsm.space_id))";
-        $activeQuery->andWhere("($isSpecial OR $hasSpaceWith)");
+        $activeQuery->andWhere("(user.id='$yuser->id' OR ($isSpecial OR $hasSpaceWith))");
 
         return $activeQuery;
     }
