@@ -10,6 +10,8 @@ namespace humhub\modules\dashboard\components\actions;
 
 use Yii;
 
+use intelligen\modules\pcontent\models\WallContentMembership;
+
 /**
  * DashboardStreamAction
  * Note: This stream action is also used for activity e-mail content.
@@ -72,11 +74,12 @@ class DashboardStream extends \humhub\modules\content\components\actions\Stream
             $union .= " UNION " . Yii::$app->db->getQueryBuilder()->build($spaceFollow)[0];
 
             // User to space memberships
+            $wallContentMembership = WallContentMembership::tableName();
             $spaceMemberships = (new \yii\db\Query())
-                    ->select("sm.wall_id")
-                    ->from('space_membership')
-                    ->leftJoin('space sm', 'sm.id=space_membership.space_id')
-                    ->where('space_membership.user_id=' . $this->user->id . ' AND sm.wall_id IS NOT NULL AND space_membership.show_at_dashboard = 1');
+                    ->select("wcm.wall_id")
+                    ->from("$wallContentMembership wcm")
+                    ->leftJoin('space sm', 'sm.id=wcm.content_container_id')
+                    ->where('wcm.user_id=' . $this->user->id . ' AND sm.wall_id IS NOT NULL');
             $union .= " UNION " . Yii::$app->db->getQueryBuilder()->build($spaceMemberships)[0];
 
             if ($friendshipEnabled) {

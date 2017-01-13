@@ -45,9 +45,15 @@ class ContentContainerStream extends Stream
 
         // Get Content Container by Param
         if ($this->contentContainer->id != "") {
-            $this->activeQuery->andWhere([
-                "$wallContentMembership.content_container_id" => $this->contentContainer->id
-            ]);
+            $wcm = new yii\db\Query;
+            $wcm
+                ->select('id')
+                ->from("$wallContentMembership wcm")
+                ->where([
+                    'wall_entry.wall_id' => new \yii\db\Expression('wcm.wall_id'), 
+                    'wcm.content_container_id' => $this->contentContainer->id
+                ]);
+            $this->activeQuery->andWhere(['exists', $wcm]);
         } else {
             Yii::warning("No id for content container " . get_class($this->contentContainer) . " - " . $this->contentContainer->getPrimaryKey() . " set - stopped stream action!");
             // Block further execution

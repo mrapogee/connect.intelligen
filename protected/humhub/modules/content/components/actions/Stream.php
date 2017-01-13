@@ -143,29 +143,28 @@ class Stream extends \yii\base\Action
         $this->setupCriteria();
         $this->setupFilters();
 
-        $wallContentMembership = WallContentMembership::tableName();
-        $this->activeQuery->leftJoin(
-            $wallContentMembership,
-            "wall_entry.wall_id=$wallContentMembership.wall_id"
-        );
-
-        //$this->activeQuery->andWhere("$wallContentMembership.id IS NOT NULL");
-        //$this->activeQuery->andWhere(["$wallContentMembership.user_id" => $this->user->id]);
-
-        $this->activeQuery->innerJoin(
-            "(SELECT wall_entry.content_id, MIN(wall_entry.id) min_id FROM wall_entry GROUP BY wall_entry.content_id) unique_content",
-            "wall_entry.id=unique_content.min_id"
-        );
     }
 
     public function setupCriteria()
     {
+        $wallContentMembership = WallContentMembership::tableName();
+
         $this->activeQuery->joinWith('content');
         $this->activeQuery->joinWith('content.createdBy');
         $this->activeQuery->joinWith('content.contentContainer');
 
         $this->activeQuery->limit($this->limit);
         $this->activeQuery->andWhere(['user.status' => User::STATUS_ENABLED]);
+
+        $wcm = new yii\db\Query;
+        $wcm
+            ->select('id')
+            ->from("$wallContentMembership wcm")
+            ->where([
+                'wall_entry.wall_id' => new \yii\db\Expression('wcm.wall_id'), 
+                'wcm.user_id' => $this->user->id
+            ]);
+        $this->activeQuery->andWhere(['exists', $wcm]);
 
         /**
          * Handle Stream Mode (Normal Stream or Activity Stream)

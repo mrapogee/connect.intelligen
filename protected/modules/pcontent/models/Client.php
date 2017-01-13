@@ -127,7 +127,6 @@ class Client extends Model {
                 return ['errors' => $space->getErrors()];
             }
 
-            $space->addMember($user->id);
             $space->enableModule('pcontent');
 
             $clientWall = new Wall();
@@ -139,14 +138,7 @@ class Client extends Model {
                 return ['errors' => $clientWall->getErrors()];
             }
 
-            $wallMember = new WallContentMembership();
-            $wallMember->content_container_id = $space->id;
-            $wallMember->user_id = $user->id;
-            $wallMember->wall_id = $clientWall->id;
-
-            if (!$wallMember->validate() || !$wallMember->save()) {
-                return ['errors' => $wallMember->getErrors()];
-            }
+            $space->addMember($user->id, 1, [$clientWall->id, $space->wall_id]);
 
             $agentWall = new Wall();
             $agentWall->title = 'Agent';
@@ -162,16 +154,7 @@ class Client extends Model {
                 : Yii::$app->user->getIdentity();
 
             if ($agent) {
-                $space->addMember($agent->id);
-
-                $agentWallMember = new WallContentMembership();
-                $agentWallMember->content_container_id = $space->id;
-                $agentWallMember->wall_id = $agentWall->id;
-                $agentWallMember->user_id = $agent->id;
-
-                if (!$agentWallMember->validate() || !$agentWallMember->save()) {
-                    return ['errors' => $agentWallMember->getErrors()];
-                }
+                $space->addMember($agent->id, 1, [$agentwall->id, $space->wall_id]);
             }
         }
 

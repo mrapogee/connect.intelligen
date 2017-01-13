@@ -332,8 +332,12 @@ class SpaceModelMembership extends Behavior
      * @param type $userId
      * @param type $canLeave 0: user cannot cancel membership | 1: can cancel membership | 2: depending on space flag members_can_leave
      */
-    public function addMember($userId, $canLeave = 1)
+    public function addMember($userId, $canLeave = 1, $walls = 0)
     {
+        if ($walls === 0) {
+            $walls = [$this->owner->wall_id];
+        }
+
         $user = User::findOne(['id' => $userId]);
         $membership = $this->getMembership($userId);
 
@@ -400,13 +404,13 @@ class SpaceModelMembership extends Behavior
         $notificationApprovalRequest->originator = $user;
         $notificationApprovalRequest->delete();
 
-        $defaultWall = $this->owner->wall_id;
+        if ($walls)
 
-        if ($defaultWall !== null) {
+        foreach ($walls as $wall) {
             $wallMember = new WallContentMembership();
             $wallMember->content_container_id = $this->owner->id;
             $wallMember->user_id = $userId;
-            $wallMember->wall_id = $defaultWall;
+            $wallMember->wall_id = $wall;
             $wallMember->save();
         }
     }

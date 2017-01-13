@@ -1,0 +1,11 @@
+{
+    "id": "egnyte",
+    "name": "Egnyte",
+    "description": "Integration with Egnyte for file storage.",
+    "keywords": ["file", "storage", "egnyte"],
+    "version": "0.0.1",
+    "humhub": {
+        "minVersion": "1.1.0"
+    },
+    "screenshots": []
+}

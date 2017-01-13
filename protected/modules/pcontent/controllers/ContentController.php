@@ -9,19 +9,10 @@ use humhub\modules\space\models\Space;
 use intelligen\modules\pcontent\models\Content;
 use intelligen\modules\pcontent\widgets\WallCreateContentForm;
 use intelligen\modules\pcontent\components\JotClient;
+use intelligen\modules\pcontent\widgets\ActivityForm;
+use intelligen\modules\pcontent\widgets\FormFrom;
 
 class ContentController extends ContentContainerController {
-    static public function getGroups () {
-        return [
-            'bidder' => 'Bidder',
-            'acme-bidder' => 'Acme Bidder',
-            'foobar-bidder' => 'Foobar Bidder',
-            'customer' => 'Customer',
-            'sales' => 'Sales Agent',
-            'designer' => 'Designer',
-        ];
-    }
-
     public function actions()
     {
         return [
@@ -48,48 +39,50 @@ class ContentController extends ContentContainerController {
         ];
     }
 
-    public function actionLogActivity($activity_type = '')
-    {
+    public function actionPostActivity() {
         $activity = new Content();
         $activity->content->container = $this->contentContainer;
 
         $body = Yii::$app->request->post();
-        if ($activity->loadActivity($body)) {
-            if ($activity->validate() && $activity->save()) {
-                return $this->htmlRedirect($this->contentContainer->createUrl('log-activity'));
-            }
-        }
+        $activity->loadActivity($body);
+
+        return ActivityForm::create($activity, $this->contentContainer);
+    }
+
+    public function actionLogActivity($activity_type = '')
+    {
+        $activity= new Content();
+        $activity->content->container = $this->contentContainer;
 
         return $this->render('logActivity', [
             'contentContainer' => $this->contentContainer,
+            'activity' => $activity,
             'activityType' => $activity_type,
-            'activity' => $activity
         ]);
     }
+
+    public function actionPostForm() {
+        $form = new Content();
+        $form->content->container = $this->contentContainer;
+
+        $body = Yii::$app->request->post();
+        $form->loadForm($body);
+
+        return ActivityForm::create($form, $this->contentContainer);
+    }
+    
 
     public function actionLogForms()
     {
         $client = JotClient::instance();
         $forms = \yii\helpers\ArrayHelper::map($client->getForms(), 'id', 'title');
-        $walls = Wall::find()->where(['object_model' => Space::className(), 'object_id' => $this->contentContainer->id])->all();
-        $default_wall_id = $this->contentContainer->wall_id;
-        $walls = array_filter($walls, function ($wall) use ($default_wall_id) { return $wall->id !== $default_wall_id; });
-        $walls = \yii\helpers\ArrayHelper::map($walls, 'id', 'title');
 
         $form = new Content();
         $form->content->container = $this->contentContainer;
 
-        $body = Yii::$app->request->post();
-        if ($form->loadForm($body)) {
-            if ($form->validate() && $form->save()) {
-                return $this->htmlRedirect($this->contentContainer->createUrl('log-forms'));
-            }
-        }
-
-        return $this->render('logForms', [
+        return $this->render('logForm', [
             'contentContainer' => $this->contentContainer,
             'forms' => $forms,
-            'walls' => $walls,
             'form' => $form,
         ]);
     }

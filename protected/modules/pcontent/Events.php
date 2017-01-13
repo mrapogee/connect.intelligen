@@ -3,9 +3,7 @@
 namespace intelligen\modules\pcontent;
 
 use Yii;
-use intelligen\modules\forms\widgets\FormsWidget;
-use intelligen\modules\forms\widgets\DocumentsWidget;
-use intelligen\modules\forms\widgets\DetailsWidget;
+use intelligen\modules\pcontent\controllers\BiddersController;
 
 class Events extends \yii\base\Object {
     public static function onSpaceSidebarInit ($event)
@@ -37,13 +35,13 @@ class Events extends \yii\base\Object {
                 'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
             ]);
 
-            /*$menu->addItem([
+            $menu->addItem([
                 'label' => 'Bidders',
                 'group' => 'modules',
-                'url' => $space->createUrl('/pcontent/content/log-forms'),
-                'icon' => '<i class="fa fa-database"></i>',
-                'isActive' => ( Yii::$app->controller->action->actionMethod === 'actionLogForms' and Yii::$app->controller->module->id === 'pcontent'),
-            ]);*/
+                'url' => $space->createUrl('/pcontent/bidders/show'),
+                'icon' => '<i class="fa fa-users"></i>',
+                'isActive' => ( Yii::$app->controller->action->controller instanceof BiddersController ),
+            ]);
         }
     }
 }
