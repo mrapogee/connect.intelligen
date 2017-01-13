@@ -32,7 +32,7 @@ class DashboardContent extends Widget
 
         echo \humhub\modules\content\widgets\Stream::widget([
             'streamAction' => '//dashboard/dashboard/stream',
-            'showFilters' => false,
+            'showFilters' => true,
             'messageStreamEmpty' => $messageStreamEmpty
         ]);
     }
