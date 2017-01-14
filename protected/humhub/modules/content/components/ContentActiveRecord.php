@@ -12,6 +12,7 @@ use Yii;
 use yii\base\Exception;
 use humhub\components\ActiveRecord;
 use humhub\modules\content\models\Content;
+use humhub\modules\content\models\WallEntry;
 
 /**
  * ContentActiveRecord is the base ActiveRecord [[\yii\db\ActiveRecord]] for Content.
@@ -43,6 +44,8 @@ use humhub\modules\content\models\Content;
  */
 class ContentActiveRecord extends ActiveRecord implements \humhub\modules\content\interfaces\ContentTitlePreview
 {
+
+    public $wallManaged = false;
 
     /**
      * @see \humhub\modules\content\widgets\WallEntry
@@ -191,7 +194,7 @@ class ContentActiveRecord extends ActiveRecord implements \humhub\modules\conten
 
         parent::afterSave($insert, $changedAttributes);
 
-        if ($insert && $this->autoAddToWall && $this->wallEntryClass != "") {
+        if ($insert && $this->autoAddToWall && $this->wallEntryClass != "" && !$this->wallManaged) {
             $this->content->addToWall();
         }
     }

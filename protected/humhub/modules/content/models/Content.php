@@ -61,6 +61,8 @@ class Content extends \humhub\components\ActiveRecord
      */
     protected $_container = null;
 
+    public $wallManaged = false;
+
     /**
      * @inheritdoc
      */
