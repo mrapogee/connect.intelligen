@@ -154,7 +154,7 @@ class Client extends Model {
                 : Yii::$app->user->getIdentity();
 
             if ($agent) {
-                $space->addMember($agent->id, 1, [$agentwall->id, $space->wall_id]);
+                $space->addMember($agent->id, 1, [$agentWall->id, $space->wall_id]);
             }
         }
 
