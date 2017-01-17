@@ -282,7 +282,7 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
         $yuser = Yii::$app->user;
         $activeQuery = Yii::createObject(ActiveQueryUser::className(), [get_called_class()]);
 
-        if ($all || $yuser->getIdentity() == null || $yuser->getIdentity()->isSystemAdmin()) {
+        if ($all || $yuser->getIdentity() == null || $yuser->getIdentity()->isSystemAdmin() || $yuser->getIdentity()->isElevated()) {
             return $activeQuery;
         }
 
@@ -467,7 +467,7 @@ class User extends ContentContainerActiveRecord implements \yii\web\IdentityInte
     {
         // Make sure we get an direct User model instance
         // (e.g. not UserEditForm) for search rebuild
-        $user = User::findOne(['id' => $this->id]);
+        $user = User::find(true)->where(['id' => $this->id])->one();
 
         if ($this->status == User::STATUS_ENABLED) {
             Yii::$app->search->update($user);
