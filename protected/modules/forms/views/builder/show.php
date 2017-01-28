@@ -2,6 +2,11 @@
 use \yii\helpers\Html;
 
 \intelligen\modules\forms\assets\Builder::register($this);
+$formData = $form ? $form->getAttributes($form->attributes()) : null;
+
+if ($formData) {
+  $formData['_id'] = (string) $form->_id;
+}
 ?>
 
 <style>
@@ -111,15 +116,9 @@ use \yii\helpers\Html;
 <script src="https://cdn.ckeditor.com/4.5.11/standard/ckeditor.js"></script>
 <script src="https://unpkg.com/signature_pad@1.5.3/signature_pad.min.js"></script>
 <script>
-  window.loadedForm = <?= json_encode($form ? $form->getAttributes($form->attributes()) : null) ?>;
+  window.loadedForm = <?= json_encode($formData) ?>;
   window.loadedBranchId = <?= json_encode($branch) ?>;
   window.loadedBranch = loadedForm.branches[loadedBranchId];
   window.builderSaveUrl = <?= json_encode($saveUrl) ?>;
-
-  // Due to php json_encode outputing object id as {$oid: id}
-  if (loadedForm._id) {
-    loadedForm._id = loadedForm._id.$oid
-    loadedForm.id = loadedForm._id.$oid
-  }
 </script>
 

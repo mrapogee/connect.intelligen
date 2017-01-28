@@ -21,7 +21,7 @@ class Events extends \yii\base\Object {
                 'group' => 'modules',
                 'url' => $space->createUrl('/forms/send'),
                 'icon' => '<i class="fa fa-database"></i>',
-                'isActive' => Yii::$app->controller->action->actionMethod === 'send' && Yii::$app->controller->module->id === 'forms',
+                'isActive' =>  Yii::$app->controller->module && Yii::$app->controller->module->id == 'forms',
             ]);
         }
     }
@@ -31,17 +31,16 @@ class Events extends \yii\base\Object {
         if (Yii::$app->user->isGuest) {
             return;
         }
-/*
+
         $user = Yii::$app->user->getIdentity();
         if ($user->isElevated()) {
             $event->sender->addItem(array(
                 'label' => 'Form Builder',
                 'url' => Url::to(['/forms/builder']),
                 'icon' => '<i class="fa fa-list-alt"></i>',
-                'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'forms'),
+                'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'forms' && Yii::$app->controller->id == 'builder'),
                 'sortOrder' => 800,
             ));
         }
-        */
     }
 }
