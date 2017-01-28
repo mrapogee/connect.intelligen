@@ -1,0 +1,8 @@
+{
+  "name": "social-intelligen",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:mrapogee/connect.intelligen.git",
+  "author": "Samuel DeSota <me@samdesota.com>",
+  "license": "AGPLv1"
+}

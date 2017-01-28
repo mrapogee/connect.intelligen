@@ -1,40 +1,33 @@
 <?php
 
-namespace humhub\modules\form\models;
+namespace intelligen\modules\forms\models;
 
-use humhub\modules\content\components\ContentActiveRecord;
-use humhub\modules\search\interfaces\Searchable;
+class Form extends \yii\mongodb\ActiveRecord {
+    const SCENARIO_DEFAULT = 'default';
 
-class Form extends ContentActiveRecord {
-    public $wallEntryClass = 'humhub\modules\form\widgets\WallEntry';
+    public function fields () {
+        return ['id' => '_id', 'name' => 'name', 'branches' => 'branches', 'latestBranch' => 'latestBranch'];
+    }
 
-    public static function tableName()
+    public function attributes()
     {
-        return 'intelligen_form_request';
+        return ['_id', 'name', 'branches', 'latestBranch'];
     }
 
     public function scenarios()
     {
-        return [];
+        return [
+            self::SCENARIO_DEFAULT => ['name', 'branches', 'latestBranch']
+        ];
+    }    
+
+    public static function collectionName()
+    {
+        return 'forms';
     }
 
     public function rules()
     {
         return array();
-    }
-
-    public function getContentName () 
-    {
-        return Yii::t('FormsModule.models_IntelligenForm', 'Form');
-    }
-
-    public function attributeLabels()
-    {
-        return array();
-    }
-
-    public function getContentDescription ()
-    {
-        return $this->form_label;
     }
 }

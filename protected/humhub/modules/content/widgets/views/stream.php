@@ -3,6 +3,7 @@
 use \yii\web\View;
 
 \humhub\modules\content\assets\Stream::register($this);
+\intelligen\modules\forms\assets\Form::register($this);
 
 $this->registerJs('var streamUrl="' . $streamUrl . '"', View::POS_BEGIN);
 
