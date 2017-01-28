@@ -31,7 +31,8 @@ class Events extends \yii\base\Object {
         if (Yii::$app->user->isGuest) {
             return;
         }
-
+/*
+        $user = Yii::$app->user->getIdentity();
         if ($user->isElevated()) {
             $event->sender->addItem(array(
                 'label' => 'Form Builder',
@@ -41,5 +42,6 @@ class Events extends \yii\base\Object {
                 'sortOrder' => 800,
             ));
         }
+        */
     }
 }
