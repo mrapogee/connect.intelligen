@@ -32,12 +32,14 @@ class Events extends \yii\base\Object {
             return;
         }
 
-        $event->sender->addItem(array(
-            'label' => 'Form Builder',
-            'url' => Url::to(['/forms/builder']),
-            'icon' => '<i class="fa fa-list-alt"></i>',
-            'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'forms'),
-            'sortOrder' => 800,
-        ));
+        if ($user->isElevated()) {
+            $event->sender->addItem(array(
+                'label' => 'Form Builder',
+                'url' => Url::to(['/forms/builder']),
+                'icon' => '<i class="fa fa-list-alt"></i>',
+                'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'forms'),
+                'sortOrder' => 800,
+            ));
+        }
     }
 }
