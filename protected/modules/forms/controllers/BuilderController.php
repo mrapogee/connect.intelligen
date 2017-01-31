@@ -3,6 +3,7 @@
 namespace intelligen\modules\forms\controllers;
 
 use Yii;
+use yii\base\Security;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\web\HttpException;
@@ -30,9 +31,11 @@ class BuilderController extends Controller
 {
 
     public $subLayout = "@intelligen/modules/forms/views/_layout";
+    public $sec;
 
     public function init() {
         $this->appendPageTitle(\Yii::t('DirectoryModule.base', 'Directory'));
+        $this->sec = new Security();
         return parent::init();
     }
 
@@ -52,20 +55,39 @@ class BuilderController extends Controller
     public function actionIndex ($form = null, $branch = null) {
         $forms = Form::find()->all();
 
+        if ($form === 'new') {
+            $form = new Form();
+            $form->name = 'Untitled';
+            $form->branches = [];
+            $form->addBranch([
+                'id' => 'base', 
+                'name' => 'Base', 
+                'form' => ['display' => 'form']
+            ]);
+
+            return $this->redirect(Url::to(['/forms/builder', 'form' => (string) $form->_id, 'branch' => $form->branches[0]['id']]));
+        } 
+
+        if ($branch === 'new') {
+            $form = Form::findOne($form);
+            if ($form) {
+                $id = $this->sec->generateRandomString(22);
+                $form->addBranch([
+                    'id' => $id,
+                    'name' => 'New Version',
+                    'form' => $form->branches[count($form->branches) - 1]['form']
+                ]);
+
+                return $this->redirect(Url::to(['/forms/builder', 'form' => (string) $form->_id, 'branch' => $id]));
+            }
+        } 
+
         if ($form) {
             $form = Form::findOne($form);
         }
 
-        if (!$form) {
-            $form = new Form();
-            $form->name = 'Untitled';
-            $form->branches = ['base' => ['name' => 'Base', 'form' => ['display' => 'form']]];
-            $form->latestBranch = 'base';
-            $branch = 'base';
-        }
-
-        if (!$branch) {
-            $branch = $form->latestBranch;
+        if ($form && !$branch) {
+            $branch = $form->branches[count($form->branches) - 1]['id'];
         }
 
         return $this->render('show', [
@@ -74,19 +96,5 @@ class BuilderController extends Controller
             'branch' => $branch,
             'form' => $form
         ]);
-    }
-
-    public function actionSave () {
-        $form = new Form();
-        $form->load(Yii::$app->request->post(), '');
-
-        if ($form->validate() && $form->save()) {
-            return json_encode();
-        }
-
-        Yii::$app->response->setStatus(400);
-        return [
-            errors => $from->getErrors()
-        ];
     }
 }

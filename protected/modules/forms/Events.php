@@ -32,8 +32,8 @@ class Events extends \yii\base\Object {
             return;
         }
 
-        $user = Yii::$app->user->getIdentity();
-        if ($user->isElevated()) {
+        $user = Yii::$app->user;
+        if ($user->isAdmin()) {
             $event->sender->addItem(array(
                 'label' => 'Form Builder',
                 'url' => Url::to(['/forms/builder']),

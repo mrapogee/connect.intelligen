@@ -1,0 +1,13 @@
+.component-settings  .checkbox > label, 
+[name="formioForm"] .checkbox > label, 
+#formBuilder .checkbox > label {
+    margin-left: 20px;
+}
+
+[name="formioForm"] .checkbox input[type="checkbox"].regular-checkbox,
+#formBuilder .checkbox input[type="checkbox"].regular-checkbox 
+.component-settings checkbox input[type="checkbox"].regular-checkbox 
+{
+    display: inline-block;
+}
+

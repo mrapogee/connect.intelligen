@@ -13,25 +13,37 @@ angular
       ) {
         /* global loadedForm, loadedBranchId, loadedBranch */
 
-        $rootScope.saved = true;
-
-        $rootScope.details = {
-          branchName: loadedBranch.name,
-          formName: loadedForm.name
-        }
-
-        $rootScope.selectedForm = loadedForm && loadedForm._id;
-
         // Swap form by redirecting
         $rootScope.$watch('selectedForm', function (newValue) {
           const isLoaded = loadedForm && loadedForm._id === newValue
+
           if (newValue && newValue.length > 0 && !isLoaded) {
             window.location.href = '?form=' + newValue
           }
         })
 
+        // Swap form by redirecting
+        $rootScope.$watch('selectedBranch', function (newValue) {
+          const isLoaded = loadedBranchId && loadedBranchId === newValue
+          console.log(newValue, isLoaded)
+
+          if (newValue && newValue.length > 0 && !isLoaded) {
+            window.location.href = '?form=' + $rootScope.selectedForm + '&branch=' + newValue
+          }
+        })
+
+        if (!loadedForm) {
+          return
+        }
+
         // Display correct selected branch
         $rootScope.selectedBranch = loadedBranchId
+        $rootScope.selectedForm = loadedForm._id
+        $rootScope.saved = true
+        $rootScope.details = {
+          branchName: loadedBranch.name,
+          formName: loadedForm.name
+        }
 
         // Allow switching between form and wizard (multi-page) mode
         $rootScope.displays = [{
@@ -66,6 +78,50 @@ angular
             angular.merge($rootScope.form, form);
         });
 
+        $rootScope.deleteThisForm = function () {
+          if (confirm('Any submissions using this form will be broken. Are you sure you want to do this?')) {
+            $http({
+                url: url + '/' + loadedForm._id, 
+                method: 'DELETE'
+              }).then(function (result) {
+                window.location.href = '?';
+              }).catch(function (error) {
+                console.error(error) 
+                alert('There was a unkown problem saving your form.')
+              })
+          }
+        }
+
+        $rootScope.publish = function () {
+          if (confirm('All new forms will be created using this version. Are you sure you want to do this?')) {
+            loadedForm.published = loadedBranchId;
+            $rootScope.save()
+          }
+        }
+
+        $rootScope.isPublished = function () {
+          return loadedForm.published === loadedBranchId;
+        }
+
+        $rootScope.deleteThisBranch = function () {
+          if (loadedBranchId === 'base') {
+            alert('You connot delete the base version. Delete the form instead.')
+            return
+          }
+
+          if (confirm('Any submissions using this version will be broken. Are you sure you want to do this?')) {
+            $http({
+                url: url + '/' + loadedForm._id + '/branch/' + loadedBranchId, 
+                method: 'DELETE'
+              }).then(function (result) {
+                window.location.href = '?form=' + loadedBranchId;
+              }).catch(function (error) {
+                console.error(error) 
+                alert('There was a unkown problem saving your form.')
+              })
+          }
+        }
+
         var url = window.builderSaveUrl;
         $rootScope.save = function () {
             loadedBranch.form = angular.copy($rootScope.form)
@@ -73,6 +129,7 @@ angular
             loadedForm.name = $rootScope.details.formName
 
             var headers = {'Content-Type': 'application/json'}
+            console.log(loadedBranch);
 
             var queryResponse
             if (loadedForm._id) {
@@ -87,7 +144,7 @@ angular
                 return $http({
                     url: url + '/' + loadedForm._id,
                     method: 'PATCH',
-                    data: JSON.stringify({name: loadedForm.name}),
+                    data: JSON.stringify({name: loadedForm.name, published: loadedForm.published}),
                     headers: headers
                 })
               })            

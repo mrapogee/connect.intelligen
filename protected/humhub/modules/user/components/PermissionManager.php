@@ -162,7 +162,11 @@ class PermissionManager extends \yii\base\Component
         foreach (Yii::$app->getModules() as $id => $module) {
             // Ensure module is instanciated
             $module = Yii::$app->getModule($id);
-
+            $mPerm = $this->getModulePermissions($module);
+            if (!is_array($mPerm)) {
+                var_dump($id);
+                exit();
+            }
             $this->permissions = array_merge($this->permissions, $this->getModulePermissions($module));
         }
 

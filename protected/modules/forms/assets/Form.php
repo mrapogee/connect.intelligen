@@ -12,6 +12,7 @@ class Form extends AssetBundle
         'vendor/ui-bootstrap.css',
         'vendor/ui-select.css',
         'vendor/ngFormio.css',
+        'fix.css'
     ];
 
     public $js = [

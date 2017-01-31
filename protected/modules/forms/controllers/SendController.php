@@ -27,7 +27,9 @@ class SendController extends ContentContainerController {
         $formOptions = [];
 
         foreach ($forms as $form)  {
-            $formOptions[(string) $form->_id] = $form->name;
+            if ($form->published) {
+                $formOptions[(string) $form->_id] = $form->name;
+            }
         }
 
         return $this->render('show', [
@@ -42,7 +44,7 @@ class SendController extends ContentContainerController {
         $form = new FormRequest();
         $form->form_id = $body['form'];
         $form->note = $body['notes'];
-        $form->branch_id = Form::findOne($form->form_id)->latestBranch;
+        $form->branch_id = Form::findOne($form->form_id)->published;
 
         return ActivityForm::create($form, $this->contentContainer);
     }

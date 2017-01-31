@@ -19,6 +19,7 @@ return [
 			'rules' => [
 				'PUT,PATCH /api/v1/forms/<id>' => 'forms/form/update',
 				'PUT,PATCH /api/v1/forms/<id>/branch/<branch>' => 'forms/form/update-branch',
+				'DELETE /api/v1/forms/<id>/branch/<branch>' => 'forms/form/delete-branch',
 				'PUT,PATCH,POST /api/v1/submission' => 'forms/form/submit',
 				'DELETE /api/v1/forms/<id>' => 'forms/form/delete',
 				'GET,HEAD /api/v1/forms/<id>' => 'forms/form/view',

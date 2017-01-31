@@ -41,16 +41,7 @@ class Module extends ContentContainerModule {
      */
     public function getPermissions($contentContainer = null)
     {
-        /*if ($contentContainer instanceof \humhub\modules\space\models\Space) {
-            return [
-                new permissions\CreateContent()
-            ];
-        }*/
-
-        /*return [
-            new \intelligen\modules\pcontent\permissions\ResetPassword,
-            new \intelligen\modules\pcontent\permissions\ModifyProfiles
-        ];*/
+        return [];
     }
 
     /**

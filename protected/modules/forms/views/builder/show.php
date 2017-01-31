@@ -23,7 +23,7 @@ if ($formData) {
   }
 
   .component-settings .nav-link {
-    font-size: 0.6em;
+    font-size: 1em;
   }
 
   .form-type-select {
@@ -54,61 +54,88 @@ if ($formData) {
   }
 
   .form-builder-select-form > * {
-    flex-grow: 1;
+    flex: 1;
     padding: 10px;
+  }
+
+  
+  .input-group-btn > .btn {
+    padding: 6px 12px;
   }
  </style>
 
-<div ng-app="formBuilder" class="ng-scope">
-
+<div ng-app="formBuilder" class="ng-scope" id="formBuilder">
   <div class="form-builder-select-form">
     <div class="form-group field-client">
       <label class="control-label" for="forms">Forms</label>
-      <select class="form-control" id="forms" ng-model="selectedForm">
-        <option default></option>
-        <?php foreach ($forms as $formOption): ?>
-          <option value=<?= $formOption->_id ?>><?= Html::encode($formOption->name) ?></option>
-        <?php endforeach; ?>
-      </select>
+      <div class="input-group">
+        <select class="form-control" id="forms" ng-model="selectedForm">
+          <?php foreach ($forms as $formOption): ?>
+            <option value=<?= $formOption->_id ?>><?= Html::encode($formOption->name) ?></option>
+          <?php endforeach; ?>
+          <option default value="new"> New...</option>
+        </select>
+        <span class="input-group-btn">
+          <button ng-click="deleteThisForm()" class="btn btn-danger" type="button">
+            <i class="fa fa-times"></i>
+          </button>
+        </span>
+      </div>
     </div>
-
+    <?php if ($form): ?>
     <div class="form-group field-client">
       <label class="control-label" for="branch">Version</label>
-      <select class="form-control" ng-model="selectedBranch" id="branch">
-        <?php foreach ($form->branches as $branchId => $branchOption): ?>
-          <option value=<?= $branchId ?>><?= Html::encode($branchOption['name']) ?></option>
-        <?php endforeach; ?>
-      </select>
+      <div class="input-group">
+        <select class="form-control" ng-model="selectedBranch" id="branch">
+          <?php foreach ($form->branches as $branchOption): ?>
+            <option value=<?= $branchOption['id'] ?>><?= Html::encode($branchOption['name']) ?></option>
+          <?php endforeach; ?>
+          <option default value="new"> New...</option>
+        </select>
+        <span class="input-group-btn">
+          <button ng-click="deleteThisBranch()" class="btn btn-danger" type="button">
+            <i class="fa fa-times"></i>
+          </button>
+        </span>
+      </div>
     </div>
+    <?php endif; ?>
   </div>
 
-  <div class="form-builder-form-container">
-
-    <div class="form-builder-form">
-      <div class="form-group field-client">
-        <label class="control-label" for="name">Name</label>
-        <input class="form-control" id="name" ng-model="details.formName" type="text"/>
-      </div>
-
-      <div class="form-group field-client">
-        <label class="control-label" for="name">Version Name</label>
-        <input class="form-control" id="name" ng-model="details.branchName" type="text"/>
-      </div>
-
-      <div class="form-group field-client">
-        <label class="control-label" for="name">Display As</label>
-        <select class="form-control" ng-model="form.display" ng-options="display.name as display.title for display in displays"></select>
-      </div>
-    </div>
-
-    <div class="buttons">
-      <button ng-click="save()" ng-disabled="saved" class="btn btn-primary" title="Save Form">Save</button>
-      <button ng-click="publish()" class="btn" title="Publish Form">Publish</button>
-    </div>
+  <div ng-if="!form" class="alert alert-info">
+    Select or create a form to get started!
   </div>
 
-  <div class="well" style="background-color: #fdfdfd;">
-      <form-builder form="form"></form-builder>
+  <div ng-if="form">
+    <div class="form-builder-form-container">
+
+      <div class="form-builder-form">
+        <div class="form-group field-client">
+          <label class="control-label" for="name">Name</label>
+          <input class="form-control" id="name" ng-model="details.formName" type="text"/>
+        </div>
+
+        <div class="form-group field-client">
+          <label class="control-label" for="name">Version Name</label>
+          <input class="form-control" id="name" ng-model="details.branchName" type="text"/>
+        </div>
+
+        <div class="form-group field-client">
+          <label class="control-label" for="name">Display As</label>
+          <select class="form-control" ng-model="form.display" ng-options="display.name as display.title for display in displays"></select>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button ng-click="save()" ng-disabled="saved" class="btn btn-primary" title="Save Form">Save</button>
+        <button ng-click="publish()" ng-disabled="isPublished()" class="btn" title="Publish Form">Publish</button>
+      </div>
+    </div>
+
+    <div class="well" style="background-color: #fdfdfd;">
+        <form-builder ng-if="form" form="form"></form-builder>
+      
+    </div>
   </div>
 </div>
 <!-- <formio form="form" ng-if="renderForm"></formio> -->
@@ -116,9 +143,11 @@ if ($formData) {
 <script src="https://cdn.ckeditor.com/4.5.11/standard/ckeditor.js"></script>
 <script src="https://unpkg.com/signature_pad@1.5.3/signature_pad.min.js"></script>
 <script>
-  window.loadedForm = <?= json_encode($formData) ?>;
-  window.loadedBranchId = <?= json_encode($branch) ?>;
-  window.loadedBranch = loadedForm.branches[loadedBranchId];
+  window.loadedForm = <?= json_encode($formData ? $formData : null) ?>;
+  window.loadedBranchId = <?= json_encode($branch ? $branch : null) ?>;
+  if (loadedForm) {
+    window.loadedBranch = loadedForm.branches.find(function (branch) { return branch['id'] == loadedBranchId; });
+  }
   window.builderSaveUrl = <?= json_encode($saveUrl) ?>;
 </script>
 

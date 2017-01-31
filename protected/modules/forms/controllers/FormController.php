@@ -35,19 +35,30 @@ class FormController extends ActiveController
         $formRequest->submit($formValue);
     }
 
+    public function actionDeleteBranch () {
+        $formId = Yii::$app->request->queryParams['id'];
+        $branchId = Yii::$app->request->queryParams['branch'];
+
+        $form = Form::findOne($formId);
+        if ($form) {
+            $form->removeBranch($branchId);
+
+            return $form;
+        }
+
+        throw new yii\web\HttpException(404, 'Could not find requested form.');
+    }
+
     public function actionUpdateBranch () {
         $formId = Yii::$app->request->queryParams['id'];
         $branchId = Yii::$app->request->queryParams['branch'];
 
         $form = Form::findOne($formId);
         if ($form) {
-            $branches = $form->branches;
-            $branches[$branchId] = Yii::$app->request->post();
-            $form->branches = $branches;
+            $branch = Yii::$app->request->post();
+            $form->updateBranch($branchId, $branch);
 
-            if ($form->validate() && $form->save()) {
-                return Yii::$app->request->post();
-            }
+            return $branch; 
         } else {
             throw new yii\web\HttpException(404, 'Could not find requested form.');
         }

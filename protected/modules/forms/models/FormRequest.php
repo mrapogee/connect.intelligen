@@ -31,7 +31,7 @@ class FormRequest extends ContentActiveRecord {
         return [
             'id' => $this->id,
             'name' => $form->name,
-            'form' => $form->branches[$this->branch_id]['form']
+            'form' => $form->getBranch($this->branch_id)['form']
         ];
     }
 

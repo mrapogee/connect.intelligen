@@ -265,7 +265,7 @@ function initPlugins() {
     $('input, textarea').placeholder();
 
     // Replace the standard checkbox and radio buttons
-    $('body').find(':checkbox, :radio').flatelements();
+    //$('body').find(':checkbox, :radio').flatelements();
 
     $('a[data-loader="modal"], button[data-loader="modal"]').loader();
 

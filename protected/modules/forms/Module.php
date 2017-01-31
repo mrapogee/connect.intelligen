@@ -30,4 +30,16 @@ class Module extends ContentContainerModule {
     {
         return 'Allows forms to be used that have been built with the form builder.';
     }
+
+    public function getPermissions($contentContainer = null)
+    {
+        /*if ($contentContainer instanceof \humhub\modules\space\models\Space) {
+            return [
+                new permissions\CreateContent()
+            ];
+        }*/
+
+        return [
+        ];
+    }
 }
