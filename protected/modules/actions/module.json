@@ -1,0 +1,11 @@
+{
+    "id": "actions",
+    "name": "Intelligen Automation",
+    "description": "Automation for Intelligen.Enengy",
+    "keywords": ["Automation"],
+    "version": "0.0.1",
+    "humhub": {
+        "minVersion": "1.1.0"
+    },
+    "screenshots": []
+}

@@ -6,6 +6,7 @@ use Yii;
 use yii\rest\ActiveController;
 use intelligen\modules\forms\models\Form;
 use intelligen\modules\forms\models\FormRequest;
+use intelligen\modules\actions\components\WaggleClient;
 
 class FormController extends ActiveController
 {
@@ -28,11 +29,12 @@ class FormController extends ActiveController
 
     public function actionSubmit () {
         $body = Yii::$app->request->post();
-        $formRequestId = $body['_id'];
-        $formValue = $body['data'];
+        $formRequestId = $body['_request'];
+        $item = $body['_item'];
+        $data = $body['data'];
 
         $formRequest = FormRequest::findOne($formRequestId);
-        $formRequest->submit($formValue);
+        $item = $formRequest->updateItem($item, $data);
     }
 
     public function actionDeleteBranch () {
@@ -58,7 +60,7 @@ class FormController extends ActiveController
             $branch = Yii::$app->request->post();
             $form->updateBranch($branchId, $branch);
 
-            return $branch; 
+            return $branch;
         } else {
             throw new yii\web\HttpException(404, 'Could not find requested form.');
         }

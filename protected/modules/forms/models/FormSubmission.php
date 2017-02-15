@@ -4,7 +4,7 @@ namespace intelligen\modules\forms\models;
 
 class FormSubmission extends \yii\mongodb\ActiveRecord {
     const SCENARIO_DEFAULT = 'default';
-    
+
     public static function collectionName()
     {
         return 'formValues';
@@ -12,7 +12,7 @@ class FormSubmission extends \yii\mongodb\ActiveRecord {
 
     public function attributes()
     {
-        return ['_id', 'formId', 'branchId', 'value'];
+        return ['_id', 'formId', 'branchId', 'value', 'processAttributes', 'submittedBy'];
     }
 
     public function scenarios()
@@ -20,7 +20,7 @@ class FormSubmission extends \yii\mongodb\ActiveRecord {
         return [
             self::SCENARIO_DEFAULT => $this->attributes()
         ];
-    }    
+    }
 
     public function rules()
     {

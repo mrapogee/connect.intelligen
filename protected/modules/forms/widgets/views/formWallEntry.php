@@ -1,3 +1,9 @@
+<?php
+
+use yii\helpers\Html;
+
+?>
+
 <style>
 .formbuilder {
   height: 600px;
@@ -25,10 +31,17 @@
   width: 100px;
   height: 28px;
   vertical-align: top;
-} 
+}
 
 .form-note {
   margin-bottom: 20px;
+  min-height: 5px;
+}
+
+.form-wall-panels {
+  background-color: #fafafa;
+  margin: 10px -10px;
+  padding: 10px;
 }
 
 </style>
@@ -37,23 +50,75 @@
   <?= humhub\widgets\RichText::widget(['text' => $formRequest->note]); ?>
 </div>
 
-<div id="form-request-<?= $form['id'] ?>">
-  <formio submission='submissions[<?= json_encode((string) $formRequest->id) ?>]' form='forms[<?= json_encode($form['id']) ?>]'></formio>
-</div>
+<div class="form-wall-entry">
+
+  <div id="package-<?= $formRequest->id ?>" class="panel-group form-wall-panels">
+
+    <?php foreach ($items as $index => $item): ?>
+      <div class="panel panel-info">
+      <?php if ($item->type === 'form'): ?>
+          <div class="panel-heading">
+            <?= Html::encode($item->label) ?>
+          </div>
+
+          <div class="panel-body">
+            <formio submission="{_id: {_item: <?= $index ?>, _request: <?= $formRequest->id ?>, _formId: <?= htmlspecialchars(json_encode($item->formId)) ?>, _branchId: <?= htmlspecialchars(json_encode($item->itemValue['branch'])) ?>}, data: <?= htmlspecialchars(json_encode($item->itemValue['submission'])) ?>}" form="<?= htmlspecialchars(json_encode($item->itemValue['form'])) ?>"></formio>
+          </div>
+      <?php elseif ($item->type === 'approve'): ?>
+        <?php $item->itemValue['form']['_id'] = (string) $formRequest->id . $item->threadId; ?>
+
+        <div class="panel-heading">
+         <?= Html::encode($item->label) ?> from <strong><?= Html::encode($item->itemValue['user']->getDisplayName()) ?></strong>
+        </div>
+
+        <div class="panel-body">
+        <formio-submission submission="{_id: {_item: <?= $index ?>, _request: <?= $formRequest->id ?>, _formId: <?= htmlspecialchars(json_encode($item->formId)) ?>, _branchId: <?= htmlspecialchars(json_encode($item->itemValue['branch'])) ?>}, data: <?= htmlspecialchars(json_encode($item->itemValue['submission'])) ?>}" form="<?= htmlspecialchars(json_encode($item->itemValue['form'])) ?>"></formio-submission>
+
+        <button class="btn btn-primary" ng-click="approve({_item: <?= $index ?>, _request: <?= $formRequest->id ?>, data: true})">Approve</button>
+        </div>
+
+      <?php elseif ($item->type === 'submission'): ?>
+        <?php $item->itemValue['form']['_id'] = (string) $formRequest->id . $item->threadId; ?>
+
+        <div class="panel-heading">
+          <strong><?= Html::encode($item->itemValue['user']->getDisplayName()) ?>'s</strong> <?= Html::encode($item->label) ?>
+        </div>
+
+        <div class="panel-body">
+        <formio-submission submission="{_id: {_item: <?= $index ?>, _request: <?= $formRequest->id ?>, _formId: <?= htmlspecialchars(json_encode($item->formId)) ?>, _branchId: <?= htmlspecialchars(json_encode($item->itemValue['branch'])) ?>}, data: <?= htmlspecialchars(json_encode($item->itemValue['submission'])) ?>}" form="<?= htmlspecialchars(json_encode($item->itemValue['form'])) ?>"></formio-submission>
+        </div>
+
+      <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+ </div>
 
 <script>
-
  angular.injector(['ng', 'formioApp']).invoke(['$compile', '$rootScope', '$http', function($compile, $rootScope, $http) {
-   $rootScope.forms[<?= json_encode($form['id']) ?>] = <?=json_encode($form['form']) ?>;
-   $rootScope.submissions[<?= json_encode((string) $formRequest->id) ?>]  = {
-     _id: <?= json_encode((string) $formRequest->id) ?>,
-     data: <?= json_encode($submission) ?>
+    const $scope = $rootScope.$new(true);
+    $compile(document.getElementById("package-" + <?= json_encode($formRequest->id) ?>))($scope)
+
+    $scope.approve = function (sub) {
+        const method = 'PUT'
+        $http({
+          url: <?= json_encode($submitUrl) ?>,
+          data: JSON.stringify(sub),
+          method: method,
+          headers: {'Content-Type': 'application/json'}
+        }).then(function () {
+          console.log('success')
+        }).catch(function () {
+          console.log('fail')
+        })
     };
 
-    $compile(document.getElementById("form-request-" + <?= json_encode($form['id']) ?>))($rootScope)
+    $scope.$on('formSubmission', function (e, sub) {
+      if (sub._id._request === <?= json_encode($formRequest->id) ?>) {
+        sub._request = sub._id._request
+        sub._item = sub._id._item
 
-    $rootScope.$on('formSubmission', (e, sub) => {
-      if (sub._id === <?= json_encode((string) $formRequest->id) ?>) {
+        sub.data = {value: sub.data, branchId: sub._id._branchId, formId: sub._id._formId}
         var method = 'PUT';
         $http({
           url: <?= json_encode($submitUrl) ?>,
@@ -61,12 +126,11 @@
           method: method,
           headers: {'Content-Type': 'application/json'}
         }).then(function() {
-          $rootScope.$broadcast('submitDone', sub, 'Successfully Submitted!');
+          $scope.$broadcast('submitDone', sub, 'Successfully Submitted!');
         }).catch(function() {
-          $rootScope.$broadcast('submitError', 'Oops, there was a problem submitting.');
+          $scope.$broadcast('submitError', 'Oops, there was a problem submitting.');
         })
       }
     })
  }])
-
 </script>

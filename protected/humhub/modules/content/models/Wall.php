@@ -3,6 +3,7 @@
 namespace humhub\modules\content\models;
 
 use humhub\components\ActiveRecord;
+use intelligen\modules\pcontent\models\WallContentMembership;
 
 /**
  * This is the model class for table "wall".
@@ -35,8 +36,16 @@ class Wall extends ActiveRecord
         return [
             [['object_model', 'object_id'], 'required'],
             [['object_id'], 'integer'],
-            [['object_model', 'title'], 'string', 'max' => 50]
+            [['object_model', 'title', 'role_id', 'user_id'], 'string', 'max' => 50]
         ];
+    }
+
+    public function afterDelete () {
+        parent::afterDelete();
+
+        foreach (WallContentMembership::findAll(['wall_id' => $this->id]) as $spaceMembership) {
+            $spaceMembership->delete();
+        }
     }
 
     /**
@@ -49,6 +58,8 @@ class Wall extends ActiveRecord
             'object_model' => 'Object Model',
             'object_id' => 'Object ID',
             'title' => 'Title',
+            'role_id' => 'Role',
+            'user_id' => 'Content',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

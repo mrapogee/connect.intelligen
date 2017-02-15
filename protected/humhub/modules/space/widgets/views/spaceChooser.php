@@ -91,6 +91,9 @@ $this->registerJsVar('scSpaceListUrl', Url::to(['/space/list', 'ajax' => 1]));
                     echo Html::a("$plusIcon Space", Url::to(['/space/create/create']), array('class' => 'btn btn-default', 'data-target' => '#globalModal'));
                     ?>
 
+                    <?php
+                    echo Html::a("$plusIcon Process", Url::to(['/actions/create/create']), array('class' => 'btn btn-default', 'data-target' => '#globalModal'));
+                    ?>
                 </div>
             </li>
         <?php endif; ?>

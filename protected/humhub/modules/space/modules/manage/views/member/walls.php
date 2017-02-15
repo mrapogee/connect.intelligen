@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
         <div class='header'>
             <h4>Walls</h4>
             <a href="<?= $space->createUrl('member/edit-wall') ?>" class="btn btn-primary" title="Create Wall"><i class="fa fa-plus"></i> Wall</a>
-        </div>       
+        </div>
         <br>
         <table class="table table-hover">
             <thead>
@@ -31,14 +31,14 @@ use yii\widgets\ActiveForm;
                     <?= $wall->title ?>
                     </td>
                     <td>
-                    <?= isset($members[$wall->id]) ? implode(',', $members[$wall->id]) : '' ?>
+                    <?= isset($members[$wall->id]) ? implode(', ', $members[$wall->id]) : '' ?>
                     </td>
                     <td>
                         <a href="<?= $space->createUrl('member/edit-wall', ['id' => $wall->id]) ?>" class="btn btn-primary btn-xs" title="Create Wall"><i class="fa fa-pencil"></i> </a>
                         <a href="<?= $space->createUrl('member/delete-wall', ['id' => $wall->id]) ?>" class="btn btn-danger btn-xs" title="Create Wall"><i class="fa fa-times"></i> </a>
                     </td>
                 </tr>
-            <?php endforeach; ?> 
+            <?php endforeach; ?>
             </tbody>
        </table>
     </div>

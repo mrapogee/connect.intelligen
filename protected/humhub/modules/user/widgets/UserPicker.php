@@ -44,6 +44,13 @@ class UserPicker extends \yii\base\Widget
     public $inputId = "";
 
     /**
+     * Id of input element which should replaced
+     *
+     * @var type
+     */
+    public $value = null;
+
+    /**
      * JSON Search URL - defaults: search/json
      *
      * The token -keywordPlaceholder- will replaced by the current search query.
@@ -88,16 +95,16 @@ class UserPicker extends \yii\base\Widget
      * @var string for input placeholder attribute.
      */
     public $placeholderText = "";
-    
+
     /**
      * Can be used to filter user roles like friends only
-     * @var type 
+     * @var type
      */
     public $userRole = null;
-    
+
     /**
      * Used to transfer additional data to the server
-     * @var type 
+     * @var type
      */
     public $data = null;
 
@@ -127,6 +134,10 @@ class UserPicker extends \yii\base\Widget
 
         // Try to get current field value, when model & attribute attributes are specified.
         $currentValue = "";
+        if ($this->value != null) {
+            $currentValue = $this->value;
+        }
+
         if ($this->model != null && $this->attribute != null) {
             $attribute = $this->attribute;
             $currentValue = $this->model->$attribute;
@@ -144,27 +155,27 @@ class UserPicker extends \yii\base\Widget
                     'placeholderText' => $this->placeholderText,
         ]);
     }
-    
+
     /**
      * Creates a json user array used in the userpicker js frontend.
      * The $cfg is used to specify the filter values the following values are available:
-     * 
+     *
      * query - (ActiveQuery) The initial query which is used to append additional filters. - default = User Friends if friendship module is enabled else User::find()
-     * 
+     *
      * active - (boolean) Specifies if only active user should be included in the result - default = true
-     * 
+     *
      * maxResults - (int) The max number of entries returned in the array - default = 10
-     * 
+     *
      * keyword - (string) A keyword which filters user by username, firstname, lastname, email and title
-     * 
+     *
      * permission - (BasePermission) An additional permission filter
-     * 
+     *
      * fillQuery - (ActiveQuery) Can be used to fill the result array if the initial query does not return the maxResults, these results will have a lower priority
-     * 
+     *
      * fillUser - (boolean) When set to true and no fillQuery is given the result is filled with User::find() results
-     * 
+     *
      * disableFillUser - Specifies if the results of the fillQuery should be disabled in the userpicker results - default = true
-     * 
+     *
      * @param type $cfg filter configuration
      * @return type json representation used by the userpicker
      */
@@ -179,40 +190,40 @@ class UserPicker extends \yii\base\Widget
             'fillQuery' => null,
             'fillUser' => false
         ];
-        
+
         $cfg = ($cfg == null) ? $defaultCfg : array_merge($defaultCfg, $cfg);
-        
+
         //If no initial query is given we use getFriends if friendship module is enabled otherwise all users
         if(!isset($cfg['query'])) {
-            $cfg['query'] = (Yii::$app->getModule('friendship')->getIsEnabled()) 
+            $cfg['query'] = (Yii::$app->getModule('friendship')->getIsEnabled())
                     ? Yii::$app->user->getIdentity()->getFriends()
                     : UserFilter::find();
         }
-        
+
         //Filter the initial query and disable user without the given permission
         $user = UserFilter::filter($cfg['query'], $cfg['keyword'], $cfg['maxResult'], null, $cfg['active']);
         $jsonResult = self::asJSON($user, $cfg['permission'], 2);
-        
+
         //Fill the result with additional users if it's allowed and the result count less than maxResult
         if(count($user) < $cfg['maxResult'] && (isset($cfg['fillQuery']) || $cfg['fillUser']) ) {
-            
+
             //Filter out users by means of the fillQuery or default the fillQuery
             $fillQuery = (isset($cfg['fillQuery'])) ? $cfg['fillQuery'] : UserFilter::find();
             UserFilter::addKeywordFilter($fillQuery, $cfg['keyword'], ($cfg['maxResult'] - count($user)));
             $fillQuery->andFilterWhere(['not in', 'id', self::getUserIdArray($user)]);
             $fillUser = $fillQuery->all();
-            
+
             //Either the additional users are disabled (by default) or we disable them by permission
             $disableCondition = (isset($cfg['permission'])) ? $cfg['permission']  : $cfg['disableFillUser'];
             $jsonResult = array_merge($jsonResult, UserPicker::asJSON($fillUser, $disableCondition, 1));
-        }   
-        
+        }
+
         return $jsonResult;
     }
-    
+
     /**
      * Assambles all user Ids of the given $users into an array
-     * 
+     *
      * @param array $users array of user models
      * @return array user id array
      */
@@ -224,11 +235,11 @@ class UserPicker extends \yii\base\Widget
         }
         return $result;
     }
-    
+
     /**
      * Creates an json result with user information arrays. A user will be marked
      * as disabled, if the permission check fails on this user.
-     * 
+     *
      * @param type $users
      * @param type $permission
      * @return type
@@ -251,7 +262,7 @@ class UserPicker extends \yii\base\Widget
     /**
      * Creates an single user-information array for a given user. A user will be marked
      * as disabled, if the permission check fails on this user.
-     * 
+     *
      * @param type $user
      * @param type $permission
      * @return type
@@ -259,15 +270,15 @@ class UserPicker extends \yii\base\Widget
     private static function createJSONUserInfo($user, $permission = null, $priority = null)
     {
         $disabled = false;
-        
+
         if($permission != null && $permission instanceof \humhub\libs\BasePermission) {
             $disabled = !$user->getPermissionManager()->can($permission);
         } else if($permission != null) {
             $disabled = $permission;
         }
-        
+
         $priority = ($priority == null) ? 0 : $priority;
-        
+
         $userInfo = [];
         $userInfo['id'] = $user->id;
         $userInfo['guid'] = $user->guid;

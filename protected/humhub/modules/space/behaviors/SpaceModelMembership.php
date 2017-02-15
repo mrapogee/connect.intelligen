@@ -14,6 +14,7 @@ use humhub\modules\user\models\User;
 use humhub\modules\space\models\Space;
 use humhub\modules\space\models\Membership;
 use humhub\modules\user\models\Invite;
+use humhub\modules\content\models\Wall;
 use intelligen\modules\pcontent\models\WallContentMembership;
 
 /**
@@ -46,27 +47,27 @@ class SpaceModelMembership extends Behavior
 
         return false;
     }
-    
+
     /**
      * Checks if a given Userid is allowed to leave this space.
      * A User is allowed to leave, if the can_cancel_membership flag in the space_membership table is 1. If it is 2, the decision is delegated to the space.
-     * 
+     *
      * @param number $userId, if empty hte currently logged in user is taken.
      * @return bool
      */
     public function canLeave($userId = "")
     {
-    
+
         // Take current userid if none is given
         if ($userId == "")
             $userId = Yii::$app->user->id;
-    
+
         $membership = $this->getMembership($userId);
 
         if ($membership != null && !empty($membership->can_cancel_membership)) {
             return $membership->can_cancel_membership === 1 || ($membership->can_cancel_membership === 2 && !empty($this->owner->members_can_leave));
-        }          
-    
+        }
+
         return false;
     }
 
@@ -220,12 +221,12 @@ class SpaceModelMembership extends Behavior
             $userInvite->user_originator_id = $originatorUserId;
             $userInvite->space_invite_id = $this->owner->id;
         }
-        
+
         if($userInvite->validate() && $userInvite->save()) {
             $userInvite->sendInviteMail();
             return true;
-        } 
-        
+        }
+
         return false;
     }
 
@@ -361,6 +362,9 @@ class SpaceModelMembership extends Behavior
 
             // User is already member
             if ($membership->status == Membership::STATUS_MEMBER) {
+                if ($walls) {
+                    $this->setWalls($user, $walls);
+                }
                 return true;
             }
 
@@ -404,12 +408,22 @@ class SpaceModelMembership extends Behavior
         $notificationApprovalRequest->originator = $user;
         $notificationApprovalRequest->delete();
 
-        if ($walls)
+        if ($walls) {
+            $this->setWalls($user, $walls);
+        }
+    }
 
-        foreach ($walls as $wall) {
+    public function setWalls ($user, $newWalls) {
+        $currentMembership = WallContentMembership::findAll(['user_id' => $user->id, 'content_container_id' => $this->owner->id]);
+
+        foreach ($currentMembership as $membership) {
+            $membership->delete();
+        }
+
+        foreach ($newWalls as $wall) {
             $wallMember = new WallContentMembership();
             $wallMember->content_container_id = $this->owner->id;
-            $wallMember->user_id = $userId;
+            $wallMember->user_id = $user->id;
             $wallMember->wall_id = $wall;
             $wallMember->save();
         }

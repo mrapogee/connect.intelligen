@@ -1,0 +1,1 @@
+window.mountProcessBuilder('#processBuilder')
