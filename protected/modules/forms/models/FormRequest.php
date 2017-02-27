@@ -16,7 +16,7 @@ class FormRequest extends ContentActiveRecord {
     const SCENARIO_DEFAULT = 'default';
 
     public $wallEntryClass = 'intelligen\modules\forms\widgets\WallEntry';
-    public $autoAddToWall = false;
+    public $autoAddToWall = true;
 
     public static function tableName()
     {
@@ -28,6 +28,7 @@ class FormRequest extends ContentActiveRecord {
 
         if ($insert) {
             $users = json_decode($this->users);
+
             foreach ($users as $user) {
                 $wall = Wall::findOne(['user_id' => $user, 'object_id' => $this->content->container->id]);
                 if ($wall != null) {

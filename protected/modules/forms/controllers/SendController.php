@@ -42,9 +42,9 @@ class SendController extends ContentContainerController {
         $body = Yii::$app->request->post();
 
         $form = new FormRequest();
-        $form->form_id = $body['form'];
+        $form->users = '[]';
+        $form->items = json_encode([['type' => 'form', 'formId' => $body['form'], 'threadId' => 'single', 'label' => '']]);
         $form->note = $body['notes'];
-        $form->branch_id = Form::findOne($form->form_id)->published;
 
         return ActivityForm::create($form, $this->contentContainer);
     }
